@@ -1,0 +1,68 @@
+{
+  "": {
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/master.swiftdeps"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/App/AwesomeVideoPlayerApp.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/Services/LibraryService.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/Services/PlaybackService.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.dia"
+  }
+}

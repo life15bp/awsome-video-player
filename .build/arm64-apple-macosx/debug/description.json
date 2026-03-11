@@ -1,0 +1,415 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.AwesomeVideoPlayer-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/sources",
+      "importPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/App/AwesomeVideoPlayerApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Services/LibraryService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Services/PlaybackService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "AwesomeVideoPlayer",
+      "moduleOutputPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules/AwesomeVideoPlayer.swiftmodule",
+      "objects" : [
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx13.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j16",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "AwesomeVideoPlayer_main",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "awsome_video_player"
+      ],
+      "outputFileMapPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules/AwesomeVideoPlayer.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/life15bp/localhost/awsome-video-player/Sources/App/AwesomeVideoPlayerApp.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Services/LibraryService.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Services/PlaybackService.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift"
+      ],
+      "tempsPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "AwesomeVideoPlayer" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AwesomeVideoPlayer",
+      "-package-name",
+      "awsome_video_player",
+      "-c",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/App/AwesomeVideoPlayerApp.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Services/LibraryService.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Services/PlaybackService.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift",
+      "-I",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx13.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j16",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "AwesomeVideoPlayer_main",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "awsome_video_player",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "AwesomeVideoPlayer" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer-entitlement.plist" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<entitlement-plist>"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<com.apple.security.get-task-allow>"
+        }
+      ],
+      "outputFilePath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer-entitlement.plist"
+    },
+    "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/App/AwesomeVideoPlayerApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Services/LibraryService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Services/PlaybackService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/sources"
+    },
+    "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.product/Objects.LinkFileList"
+    },
+    "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

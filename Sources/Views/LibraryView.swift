@@ -33,6 +33,7 @@ struct LibraryView: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
+        panel.showsHiddenFiles = true
 
         if panel.runModal() == .OK, let url = panel.url {
             onAddFolder(url)

@@ -14,14 +14,34 @@ struct PlayerView: View {
                     .foregroundColor(.secondary)
             }
 
-            HStack {
-                Button("Play") {
-                    playerViewModel.play()
+            VStack(spacing: 8) {
+                // シークバー
+                Slider(
+                    value: Binding(
+                        get: { playerViewModel.progress },
+                        set: { playerViewModel.seek(to: $0) }
+                    ),
+                    in: 0...1
+                )
+
+                // 時間表示と再生ボタン
+                HStack {
+                    Text(playerViewModel.formattedTime(playerViewModel.currentSeconds))
+                        .font(.system(size: 12, weight: .regular, design: .monospaced))
+
+                    Text(playerViewModel.formattedTime(playerViewModel.durationSeconds))
+                        .font(.system(size: 12, weight: .regular, design: .monospaced))
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    Button("Play") {
+                        playerViewModel.play()
+                    }
+                    Button("Pause") {
+                        playerViewModel.pause()
+                    }
                 }
-                Button("Pause") {
-                    playerViewModel.pause()
-                }
-                Spacer()
             }
             .padding(.top, 8)
         }
