@@ -8,17 +8,27 @@ struct PlayerView: View {
     var body: some View {
         VStack {
             if let player = playerViewModel.player {
-                ScrollCaptureView(onScroll: { deltaX, deltaY, modifierFlags in
-                    let commandPressed = modifierFlags.contains(.command)
-                    if commandPressed, abs(deltaY) >= abs(deltaX) {
-                        playerViewModel.zoom(byScrollDelta: deltaY)
-                    } else if abs(deltaX) > abs(deltaY) {
-                        playerViewModel.scrub(byHorizontalDelta: deltaX)
+                ZStack(alignment: .bottomTrailing) {
+                    ScrollCaptureView(onScroll: { deltaX, deltaY, modifierFlags in
+                        let commandPressed = modifierFlags.contains(.command)
+                        if commandPressed, abs(deltaY) >= abs(deltaX) {
+                            playerViewModel.zoom(byScrollDelta: deltaY)
+                        } else if abs(deltaX) > abs(deltaY) {
+                            playerViewModel.scrub(byHorizontalDelta: deltaX)
+                        }
+                    }) {
+                        videoContent(player: player)
                     }
-                }) {
-                    videoContent(player: player)
+                    .aspectRatio(16 / 9, contentMode: .fit)
+
+                    if playerViewModel.viewport.scale > 1.01 {
+                        MiniMapView(
+                            scale: playerViewModel.viewport.scale,
+                            offset: playerViewModel.viewport.offset
+                        )
+                        .padding(12)
+                    }
                 }
-                .aspectRatio(16 / 9, contentMode: .fit)
             } else {
                 Text("No video selected")
                     .foregroundColor(.secondary)

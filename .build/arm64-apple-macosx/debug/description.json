@@ -56,6 +56,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/MiniMapView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift"
         },
         {
@@ -87,6 +91,7 @@
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/MiniMapView.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ScrollCaptureView.swift.o"
@@ -182,6 +187,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/MiniMapView.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.swift.o"
         },
         {
@@ -207,6 +216,7 @@
         "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/MiniMapView.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Views/ScrollCaptureView.swift"
@@ -234,6 +244,7 @@
       "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/MiniMapView.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/ScrollCaptureView.swift",
@@ -368,6 +379,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/MiniMapView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift"
         },
         {
@@ -403,6 +418,10 @@
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/MiniMapView.swift.o"
         },
         {
           "kind" : "file",
