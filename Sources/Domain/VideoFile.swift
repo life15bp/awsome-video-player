@@ -6,7 +6,7 @@ struct VideoFile: Identifiable, Hashable, Codable {
     let displayName: String
     let durationSeconds: Double?
 
-    init(id: UUID = UUID(), url: URL, displayName: String? = nil, durationSeconds: Double? = nil) {
+    init(id: UUID, url: URL, displayName: String? = nil, durationSeconds: Double? = nil) {
         self.id = id
         self.url = url
         self.displayName = displayName ?? url.lastPathComponent
