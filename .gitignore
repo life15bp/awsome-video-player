@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager
+.build/
+
+# Xcode (将来プロジェクトを追加する可能性を考慮)
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# エディタ / ツール
+.vscode/
+.idea/
+.cursor/
+
+# ログ / 一時ファイル
+*.log
+*.swp
+*.swo
+
+# Windows 用バイナリ一式（元ファイル）
+_orginal_file(windows)/VelBox/
+_orginal_file(windows)/VelBox.zip
+

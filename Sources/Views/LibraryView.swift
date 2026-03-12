@@ -20,7 +20,7 @@ struct LibraryView: View {
                 Text(video.displayName)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(Rectangle())
-                    .onTapGesture(count: 2) {
+                    .onTapGesture {
                         onVideoDoubleTap(video)
                     }
             }

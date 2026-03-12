@@ -16,6 +16,13 @@
     "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swiftdeps",
     "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.dia"
   },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/ViewportState.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ViewportState.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ViewportState.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ViewportState~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ViewportState.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ViewportState.dia"
+  },
   "/Users/life15bp/localhost/awsome-video-player/Sources/Services/LibraryService.swift": {
     "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.d",
     "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.swift.o",
@@ -64,5 +71,12 @@
     "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView~partial.swiftmodule",
     "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.swiftdeps",
     "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.dia"
+  },
+  "/Users/life15bp/localhost/awsome-video-player/Sources/Views/ScrollCaptureView.swift": {
+    "dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ScrollCaptureView.d",
+    "object": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ScrollCaptureView.swift.o",
+    "swiftmodule": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ScrollCaptureView~partial.swiftmodule",
+    "swift-dependencies": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ScrollCaptureView.swiftdeps",
+    "diagnostics": "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ScrollCaptureView.dia"
   }
 }

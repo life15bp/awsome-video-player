@@ -3,49 +3,50 @@ import AVKit
 
 struct PlayerView: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
+    @State private var lastDragOffset: CGSize = .zero
 
     var body: some View {
         VStack {
             if let player = playerViewModel.player {
-                VideoPlayer(player: player)
-                    .aspectRatio(16 / 9, contentMode: .fit)
+                ScrollCaptureView(onScroll: { deltaX, deltaY, modifierFlags in
+                    let commandPressed = modifierFlags.contains(.command)
+                    if commandPressed, abs(deltaY) >= abs(deltaX) {
+                        playerViewModel.zoom(byScrollDelta: deltaY)
+                    } else if abs(deltaX) > abs(deltaY) {
+                        playerViewModel.scrub(byHorizontalDelta: deltaX)
+                    }
+                }) {
+                    videoContent(player: player)
+                }
+                .aspectRatio(16 / 9, contentMode: .fit)
             } else {
                 Text("No video selected")
                     .foregroundColor(.secondary)
             }
-
-            VStack(spacing: 8) {
-                // シークバー
-                Slider(
-                    value: Binding(
-                        get: { playerViewModel.progress },
-                        set: { playerViewModel.seek(to: $0) }
-                    ),
-                    in: 0...1
-                )
-
-                // 時間表示と再生ボタン
-                HStack {
-                    Text(playerViewModel.formattedTime(playerViewModel.currentSeconds))
-                        .font(.system(size: 12, weight: .regular, design: .monospaced))
-
-                    Text(playerViewModel.formattedTime(playerViewModel.durationSeconds))
-                        .font(.system(size: 12, weight: .regular, design: .monospaced))
-                        .foregroundColor(.secondary)
-
-                    Spacer()
-
-                    Button("Play") {
-                        playerViewModel.play()
-                    }
-                    Button("Pause") {
-                        playerViewModel.pause()
-                    }
-                }
-            }
-            .padding(.top, 8)
         }
         .padding()
+    }
+
+    @ViewBuilder
+    private func videoContent(player: AVPlayer) -> some View {
+        let viewport = playerViewModel.viewport
+
+        VideoPlayer(player: player)
+            .scaleEffect(viewport.scale)
+            .offset(viewport.offset)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        let combined = CGSize(
+                            width: lastDragOffset.width + value.translation.width,
+                            height: lastDragOffset.height + value.translation.height
+                        )
+                        playerViewModel.pan(by: combined)
+                    }
+                    .onEnded { _ in
+                        lastDragOffset = playerViewModel.viewport.offset
+                    }
+            )
     }
 }
 
