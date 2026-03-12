@@ -5,11 +5,15 @@ final class PlayerViewModel: ObservableObject {
     @Published private(set) var currentFile: VideoFile?
     @Published private(set) var player: AVPlayer?
     @Published private(set) var viewport = ViewportState()
+    @Published private(set) var favorites: [FavoriteSnapshot] = []
 
     private let playbackService: PlaybackService
+    private let favoriteService: FavoriteService
 
-    init(playbackService: PlaybackService) {
+    init(playbackService: PlaybackService, favoriteService: FavoriteService) {
         self.playbackService = playbackService
+        self.favoriteService = favoriteService
+        self.favorites = favoriteService.loadFavorites()
     }
 
     func load(file: VideoFile) {
@@ -17,6 +21,13 @@ final class PlayerViewModel: ObservableObject {
         playbackService.load(file: file)
         player = playbackService.player
         viewport = ViewportState()
+    }
+
+    var favoritesForCurrentFile: [FavoriteSnapshot] {
+        guard let currentFile else { return [] }
+        return favorites
+            .filter { $0.videoId == currentFile.id }
+            .sorted { $0.timeSeconds < $1.timeSeconds }
     }
 
     var currentSeconds: Double {
@@ -80,6 +91,19 @@ final class PlayerViewModel: ObservableObject {
         let newSeconds = min(max(currentSeconds + deltaSeconds, 0), duration)
         playbackService.seek(to: newSeconds)
     }
+
+    // MARK: - Favorites
+
+    func addFavoriteAtCurrentTime() {
+        guard let currentFile else { return }
+        let seconds = currentSeconds
+        let snapshot = FavoriteSnapshot(videoId: currentFile.id, timeSeconds: seconds)
+        favorites.append(snapshot)
+        favorites.sort { $0.timeSeconds < $1.timeSeconds }
+        favoriteService.saveFavorites(favorites)
+    }
+
+    func seek(to snapshot: FavoriteSnapshot) {
+        playbackService.seek(to: snapshot.timeSeconds)
+    }
 }
-
-

@@ -2,32 +2,50 @@ import SwiftUI
 import AVKit
 
 struct PlayerView: View {
+    @EnvironmentObject private var libraryViewModel: LibraryViewModel
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @State private var lastDragOffset: CGSize = .zero
 
     var body: some View {
         VStack {
             if let player = playerViewModel.player {
-                ZStack(alignment: .bottomTrailing) {
-                    ScrollCaptureView(onScroll: { deltaX, deltaY, modifierFlags in
-                        let commandPressed = modifierFlags.contains(.command)
-                        if commandPressed, abs(deltaY) >= abs(deltaX) {
-                            playerViewModel.zoom(byScrollDelta: deltaY)
-                        } else if abs(deltaX) > abs(deltaY) {
-                            playerViewModel.scrub(byHorizontalDelta: deltaX)
+                ZStack {
+                    ZStack(alignment: .bottomTrailing) {
+                        ScrollCaptureView(onScroll: { deltaX, deltaY, modifierFlags in
+                            let commandPressed = modifierFlags.contains(.command)
+                            if commandPressed, abs(deltaY) >= abs(deltaX) {
+                                playerViewModel.zoom(byScrollDelta: deltaY)
+                            } else if abs(deltaX) > abs(deltaY) {
+                                playerViewModel.scrub(byHorizontalDelta: deltaX)
+                            }
+                        }) {
+                            videoContent(player: player)
                         }
-                    }) {
-                        videoContent(player: player)
-                    }
-                    .aspectRatio(16 / 9, contentMode: .fit)
+                        .aspectRatio(16 / 9, contentMode: .fit)
 
-                    if playerViewModel.viewport.scale > 1.01 {
-                        MiniMapView(
-                            scale: playerViewModel.viewport.scale,
-                            offset: playerViewModel.viewport.offset
-                        )
-                        .padding(12)
+                        if playerViewModel.viewport.scale > 1.01 {
+                            MiniMapView(
+                                scale: playerViewModel.viewport.scale,
+                                offset: playerViewModel.viewport.offset
+                            )
+                            .padding(12)
+                        }
                     }
+
+                    PlaybackOverlayView()
+                        .environmentObject(libraryViewModel)
+                        .environmentObject(playerViewModel)
+                    
+                    VStack {
+                        HStack {
+                            Button("★ お気に入りに追加") {
+                                playerViewModel.addFavoriteAtCurrentTime()
+                            }
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                    .padding()
                 }
             } else {
                 Text("No video selected")
