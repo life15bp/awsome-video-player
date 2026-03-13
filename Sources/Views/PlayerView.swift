@@ -2,44 +2,19 @@ import SwiftUI
 import AVKit
 import AppKit
 
-/// macOS 13 互換: スペースキーで再生/一時停止（onKeyPress は macOS 14 以降のため AppKit で監視）
-private struct KeySpaceHandlerView: NSViewRepresentable {
-    let onSpace: () -> Void
+/// ホバー時に薄い黒のオーバーレイを出さないプレーヤー表示（AVPlayerView の controlsStyle = .none）
+private struct PlainAVPlayerView: NSViewRepresentable {
+    let player: AVPlayer?
 
-    func makeNSView(context: Context) -> NSView {
-        let view = NSView()
-        view.wantsLayer = true
+    func makeNSView(context: Context) -> AVPlayerView {
+        let view = AVPlayerView()
+        view.controlsStyle = .none
+        view.player = player
         return view
     }
 
-    func updateNSView(_ nsView: NSView, context: Context) {
-        let coord = context.coordinator
-        if coord.monitor == nil, nsView.window != nil {
-            coord.monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak coord] event in
-                guard event.keyCode == 49 else { return event }
-                coord?.onSpace()
-                return nil
-            }
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(onSpace: onSpace)
-    }
-
-    final class Coordinator {
-        var monitor: Any?
-        let onSpace: () -> Void
-
-        init(onSpace: @escaping () -> Void) {
-            self.onSpace = onSpace
-        }
-
-        deinit {
-            if let monitor = monitor {
-                NSEvent.removeMonitor(monitor)
-            }
-        }
+    func updateNSView(_ nsView: AVPlayerView, context: Context) {
+        nsView.player = player
     }
 }
 
@@ -47,9 +22,10 @@ struct PlayerView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @State private var lastDragOffset: CGSize = .zero
+    @State private var keyMonitor: Any?
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if let player = playerViewModel.player {
                 ZStack {
                     ZStack(alignment: .bottomTrailing) {
@@ -89,22 +65,61 @@ struct PlayerView: View {
                     }
                     .padding()
                 }
+
+                playbackBar
             } else {
                 Text("No video selected")
                     .foregroundColor(.secondary)
             }
         }
         .padding()
-        .background(KeySpaceHandlerView(onSpace: {
-            playerViewModel.togglePlayPause()
-        }))
+        .onAppear {
+            // スペースキー(キーコード 49)で再生/一時停止をトグル
+            if keyMonitor == nil {
+                keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                    guard event.keyCode == 49 else { return event }
+                    playerViewModel.togglePlayPause()
+                    return nil
+                }
+            }
+        }
+        .onDisappear {
+            if let monitor = keyMonitor {
+                NSEvent.removeMonitor(monitor)
+                keyMonitor = nil
+            }
+        }
+    }
+
+    private var playbackBar: some View {
+        HStack(spacing: 8) {
+            Text(playerViewModel.formattedTime(playerViewModel.currentSeconds))
+                .font(.caption.monospacedDigit())
+                .foregroundColor(.secondary)
+                .frame(width: 44, alignment: .trailing)
+
+            Slider(
+                value: Binding(
+                    get: { playerViewModel.progress },
+                    set: { playerViewModel.seek(to: $0) }
+                ),
+                in: 0...1
+            )
+
+            Text(playerViewModel.formattedTime(playerViewModel.durationSeconds))
+                .font(.caption.monospacedDigit())
+                .foregroundColor(.secondary)
+                .frame(width: 44, alignment: .leading)
+        }
+        .padding(.vertical, 6)
+        .padding(.horizontal, 4)
     }
 
     @ViewBuilder
     private func videoContent(player: AVPlayer) -> some View {
         let viewport = playerViewModel.viewport
 
-        VideoPlayer(player: player)
+        PlainAVPlayerView(player: player)
             .scaleEffect(viewport.scale)
             .offset(viewport.offset)
             .contentShape(Rectangle())

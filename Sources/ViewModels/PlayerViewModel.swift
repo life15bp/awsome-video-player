@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import Combine
 
 final class PlayerViewModel: ObservableObject {
     @Published private(set) var currentFile: VideoFile?
@@ -10,11 +11,17 @@ final class PlayerViewModel: ObservableObject {
 
     private let playbackService: PlaybackService
     private let favoriteService: FavoriteService
+    private var cancellables = Set<AnyCancellable>()
 
     init(playbackService: PlaybackService, favoriteService: FavoriteService) {
         self.playbackService = playbackService
         self.favoriteService = favoriteService
         self.favorites = favoriteService.loadFavorites()
+
+        playbackService.$currentTime
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &cancellables)
     }
 
     func load(file: VideoFile) {
