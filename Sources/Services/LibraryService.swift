@@ -1,8 +1,20 @@
 import Foundation
+import AppKit
 
 final class LibraryService {
-    private struct PersistedFolders: Codable {
+    /// 1フォルダ分の永続化データ（パス + オプションでセキュリティスコープ付きブックマーク）
+    private struct PersistedFolderEntry: Codable {
+        let path: String
+        let bookmarkData: Data?
+    }
+
+    /// 旧形式（paths のみ）との互換用
+    private struct PersistedFoldersLegacy: Codable {
         let paths: [String]
+    }
+
+    private struct PersistedFolders: Codable {
+        let items: [PersistedFolderEntry]
     }
 
     private struct VideoIdentityRecord: Codable {
@@ -55,23 +67,74 @@ final class LibraryService {
     }
 
     func loadFolders() -> [URL] {
-        guard let url = foldersFileURL,
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode(PersistedFolders.self, from: data)
-        else {
+        guard let fileURL = foldersFileURL,
+              let data = try? Data(contentsOf: fileURL) else {
             return []
         }
 
-        return decoded.paths.compactMap { path in
-            URL(fileURLWithPath: path)
+        // 新形式: items (path + 任意で bookmarkData)
+        if let decoded = try? JSONDecoder().decode(PersistedFolders.self, from: data) {
+            return decoded.items.compactMap { entry in
+                resolveFolderURL(path: entry.path, bookmarkData: entry.bookmarkData)
+            }
         }
+
+        // 旧形式: paths のみ
+        if let legacy = try? JSONDecoder().decode(PersistedFoldersLegacy.self, from: data) {
+            return legacy.paths.compactMap { path in
+                let normalized = normalizePathForStorage(path)
+                return URL(fileURLWithPath: normalized)
+            }
+        }
+
+        return []
+    }
+
+    /// ブックマークがあれば解決してスコープを取得、なければパスから URL を返す
+    private func resolveFolderURL(path: String, bookmarkData: Data?) -> URL? {
+        if let data = bookmarkData, !data.isEmpty {
+            var isStale = false
+            do {
+                let url = try URL(
+                    resolvingBookmarkData: data,
+                    options: .withSecurityScope,
+                    relativeTo: nil,
+                    bookmarkDataIsStale: &isStale
+                )
+                if url.startAccessingSecurityScopedResource() {
+                    return url
+                }
+            } catch {
+                // 解決に失敗したらパスにフォールバック
+            }
+        }
+        let normalized = normalizePathForStorage(path)
+        return URL(fileURLWithPath: normalized)
+    }
+
+    /// 保存・比較用にパスを正規化（末尾スラッシュ除去、標準化）
+    private func normalizePathForStorage(_ path: String) -> String {
+        let url = URL(fileURLWithPath: path)
+        var p = url.standardizedFileURL.path
+        if p.hasSuffix("/"), p.count > 1 {
+            p = String(p.dropLast())
+        }
+        return p
     }
 
     func saveFolders(_ folders: [URL]) {
         guard let url = foldersFileURL else { return }
 
-        let paths = folders.map { $0.path }
-        let payload = PersistedFolders(paths: paths)
+        let items: [PersistedFolderEntry] = folders.map { folderURL in
+            let path = normalizePathForStorage(folderURL.path)
+            let bookmarkData: Data? = try? folderURL.bookmarkData(
+                options: .withSecurityScope,
+                includingResourceValuesForKeys: nil,
+                relativeTo: nil
+            )
+            return PersistedFolderEntry(path: path, bookmarkData: bookmarkData)
+        }
+        let payload = PersistedFolders(items: items)
 
         guard let data = try? JSONEncoder().encode(payload) else {
             return

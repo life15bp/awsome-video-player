@@ -23,10 +23,28 @@ final class LibraryViewModel: ObservableObject {
     }
 
     func addFolder(url: URL) {
-        guard !folders.contains(url) else { return }
-        folders.append(url)
+        let normalized = url.standardizedFileURL
+        guard !folders.contains(where: { $0.standardizedFileURL.path.trimmingTrailingSlash() == normalized.path.trimmingTrailingSlash() }) else { return }
+        folders.append(normalized)
         libraryService.saveFolders(folders)
-        selectedFolder = url
+        selectedFolder = normalized
+        refreshAllVideos()
+    }
+
+    /// 追加したルートフォルダかどうか（削除対象になるのはルートのみ）
+    func isRootFolder(_ url: URL) -> Bool {
+        let path = url.standardizedFileURL.path.trimmingTrailingSlash()
+        return folders.contains { $0.standardizedFileURL.path.trimmingTrailingSlash() == path }
+    }
+
+    /// ライブラリからフォルダを削除（ルートフォルダのみ）
+    func removeFolder(_ url: URL) {
+        let path = url.standardizedFileURL.path.trimmingTrailingSlash()
+        folders.removeAll { $0.standardizedFileURL.path.trimmingTrailingSlash() == path }
+        libraryService.saveFolders(folders)
+        if selectedFolder?.standardizedFileURL.path.trimmingTrailingSlash() == path {
+            selectedFolder = folders.first
+        }
         refreshAllVideos()
     }
 
@@ -49,7 +67,10 @@ final class LibraryViewModel: ObservableObject {
         guard let selectedFolder else {
             return videos
         }
-        return videos.filter { $0.url.deletingLastPathComponent() == selectedFolder }
+        let selectedPath = selectedFolder.standardizedFileURL.path.trimmingTrailingSlash()
+        return videos.filter {
+            $0.url.deletingLastPathComponent().standardizedFileURL.path.trimmingTrailingSlash() == selectedPath
+        }
     }
 
     func videosInSameFolder(as video: VideoFile) -> [VideoFile] {
@@ -68,6 +89,13 @@ final class LibraryViewModel: ObservableObject {
         }
 
         return nil
+    }
+}
+
+private extension String {
+    func trimmingTrailingSlash() -> String {
+        if hasSuffix("/"), count > 1 { return String(dropLast()) }
+        return self
     }
 }
 

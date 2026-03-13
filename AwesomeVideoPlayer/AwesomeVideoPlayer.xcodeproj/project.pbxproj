@@ -53,6 +53,7 @@
 		A1F84DB32F646C8500348D6F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		A1F84DB42F646C8500348D6F /* ScrollCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureView.swift; sourceTree = "<group>"; };
 		A1F84DB52F646C8500348D6F /* VideoListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoListDetailView.swift; sourceTree = "<group>"; };
+		A1F84DCD2F646C8500348D6F /* AwesomeVideoPlayer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AwesomeVideoPlayer.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -77,6 +78,7 @@
 		A1F84D852F64680700348D6F = {
 			isa = PBXGroup;
 			children = (
+				A1F84DCD2F646C8500348D6F /* AwesomeVideoPlayer.entitlements */,
 				A1F84DB72F646C8500348D6F /* Sources */,
 				A1F84D902F64680700348D6F /* AwesomeVideoPlayer */,
 				A1F84D8F2F64680700348D6F /* Products */,
@@ -392,6 +394,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AwesomeVideoPlayer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -423,6 +426,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AwesomeVideoPlayer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;

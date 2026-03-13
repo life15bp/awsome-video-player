@@ -69,6 +69,13 @@ struct LibraryView: View {
             .onTapGesture {
                 libraryViewModel.selectedFolder = node.url
             }
+            .contextMenu {
+                if libraryViewModel.isRootFolder(node.url) {
+                    Button("ライブラリから削除", role: .destructive) {
+                        libraryViewModel.removeFolder(node.url)
+                    }
+                }
+            }
 
             ForEach(node.children) { child in
                 folderRow(node: child, indent: indent + 12)
@@ -86,6 +93,8 @@ struct LibraryView: View {
         panel.showsHiddenFiles = true
 
         if panel.runModal() == .OK, let url = panel.url {
+            // 次回起動後も同じフォルダにアクセスできるよう、スコープを取得してから追加する
+            _ = url.startAccessingSecurityScopedResource()
             onAddFolder(url)
         }
     }
