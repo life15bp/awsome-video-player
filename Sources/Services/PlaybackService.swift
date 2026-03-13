@@ -1,4 +1,5 @@
 import AVFoundation
+import Combine
 
 final class PlaybackService: ObservableObject {
     @Published private(set) var player: AVPlayer?
@@ -24,11 +25,17 @@ final class PlaybackService: ObservableObject {
 
         let player = AVPlayer(url: file.url)
         self.player = player
+        duration = .zero
 
         if let item = player.currentItem {
-            duration = item.asset.duration
-        } else {
-            duration = .zero
+            Task { @MainActor in
+                do {
+                    let d = try await item.asset.load(.duration)
+                    self.duration = d
+                } catch {
+                    self.duration = .zero
+                }
+            }
         }
 
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))

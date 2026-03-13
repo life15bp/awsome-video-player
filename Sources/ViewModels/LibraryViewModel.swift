@@ -1,5 +1,6 @@
 import Foundation
 import AppKit
+import Combine
 
 final class LibraryViewModel: ObservableObject {
     @Published private(set) var folders: [URL] = []
