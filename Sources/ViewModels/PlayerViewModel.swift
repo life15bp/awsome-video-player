@@ -6,6 +6,7 @@ final class PlayerViewModel: ObservableObject {
     @Published private(set) var player: AVPlayer?
     @Published private(set) var viewport = ViewportState()
     @Published private(set) var favorites: [FavoriteSnapshot] = []
+    @Published private(set) var isPlaying = false
 
     private let playbackService: PlaybackService
     private let favoriteService: FavoriteService
@@ -21,6 +22,7 @@ final class PlayerViewModel: ObservableObject {
         playbackService.load(file: file)
         player = playbackService.player
         viewport = ViewportState()
+        isPlaying = false
     }
 
     var favoritesForCurrentFile: [FavoriteSnapshot] {
@@ -55,10 +57,29 @@ final class PlayerViewModel: ObservableObject {
 
     func play() {
         playbackService.play()
+        isPlaying = true
     }
 
     func pause() {
         playbackService.pause()
+        isPlaying = false
+    }
+
+    func togglePlayPause() {
+        if isPlaying {
+            pause()
+        } else {
+            play()
+        }
+    }
+
+    /// お気に入りサムネイルから再生: 別動画の場合はロードしてからその時間へシークして再生
+    func playSnapshot(_ snapshot: FavoriteSnapshot, video: VideoFile) {
+        if currentFile?.id != video.id {
+            load(file: video)
+        }
+        seek(to: snapshot)
+        play()
     }
 
     func formattedTime(_ seconds: Double) -> String {

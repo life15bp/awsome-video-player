@@ -4,63 +4,78 @@ import AppKit
 struct LibraryView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
 
-    let videos: [VideoFile]
-    let onVideoDoubleTap: (VideoFile) -> Void
     let onAddFolder: (URL) -> Void
-
-    private let columns: [GridItem] = [
-        GridItem(.adaptive(minimum: 180), spacing: 12, alignment: .top)
-    ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Button("Add Folder…") {
-                    openFolderPicker()
-                }
-                Spacer()
+            header
+            folderTreeView
+        }
+        .padding()
+    }
+
+    private var header: some View {
+        HStack {
+            Button("Add Folder…") {
+                openFolderPicker()
             }
-            .padding(.bottom, 4)
+            Spacer()
+        }
+        .padding(.bottom, 4)
+    }
 
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 12) {
-                    ForEach(videos) { video in
-                        VStack(alignment: .leading, spacing: 6) {
-                            thumbnailView(for: video)
-                                .aspectRatio(16 / 9, contentMode: .fit)
-                                .frame(maxWidth: .infinity)
-                                .clipped()
+    private var folderTreeView: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Folders")
+                .font(.caption)
+                .foregroundColor(.secondary)
 
-                            Text(video.displayName)
-                                .font(.caption)
-                                .lineLimit(2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onVideoDoubleTap(video)
+            if libraryViewModel.folderTree.isEmpty {
+                Text("フォルダを追加してください")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(8)
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 2) {
+                        ForEach(libraryViewModel.folderTree) { node in
+                            folderRow(node: node, indent: 0)
                         }
                     }
                 }
             }
         }
-        .padding()
+        .frame(minWidth: 200)
     }
 
-    @ViewBuilder
-    private func thumbnailView(for video: VideoFile) -> some View {
-        if let image = libraryViewModel.thumbnail(for: video) {
-            Image(nsImage: image)
-                .resizable()
-                .scaledToFill()
-                .background(Color.black.opacity(0.7))
-        } else {
-            ZStack {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.3))
-                ProgressView()
+    private func folderRow(node: FolderNode, indent: CGFloat) -> AnyView {
+        let isSelected = node.url == libraryViewModel.selectedFolder
+
+        let content = VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Text(node.name)
+                    .lineLimit(1)
+                    .font(.callout)
+                Spacer()
+            }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(isSelected ? Color.accentColor.opacity(0.2) : Color.clear)
+            )
+            .contentShape(Rectangle())
+            .padding(.leading, indent)
+            .onTapGesture {
+                libraryViewModel.selectedFolder = node.url
+            }
+
+            ForEach(node.children) { child in
+                folderRow(node: child, indent: indent + 12)
             }
         }
+
+        return AnyView(content)
     }
 
     private func openFolderPicker() {

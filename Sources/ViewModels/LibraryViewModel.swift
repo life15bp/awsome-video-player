@@ -5,15 +5,19 @@ final class LibraryViewModel: ObservableObject {
     @Published private(set) var folders: [URL] = []
     @Published private(set) var videos: [VideoFile] = []
     @Published var selectedVideo: VideoFile?
+    @Published var selectedFolder: URL?
     @Published private(set) var thumbnails: [UUID: NSImage] = [:]
+    @Published private(set) var folderTree: [FolderNode] = []
 
     private let libraryService: LibraryService
     private let thumbnailService: ThumbnailService
+    private let folderTreeMaxDepth = 4
 
     init(libraryService: LibraryService, thumbnailService: ThumbnailService) {
         self.libraryService = libraryService
         self.thumbnailService = thumbnailService
         self.folders = libraryService.loadFolders()
+        self.selectedFolder = folders.first
         refreshAllVideos()
     }
 
@@ -21,12 +25,30 @@ final class LibraryViewModel: ObservableObject {
         guard !folders.contains(url) else { return }
         folders.append(url)
         libraryService.saveFolders(folders)
+        selectedFolder = url
         refreshAllVideos()
     }
 
     func refreshAllVideos() {
-        videos = folders.flatMap { libraryService.scanVideos(in: $0) }
+        videos = folders.flatMap { libraryService.scanVideosRecursively(in: $0) }
         thumbnails = [:]
+        folderTree = folders.map { buildFolderNode(url: $0, depth: 0) }
+    }
+
+    private func buildFolderNode(url: URL, depth: Int) -> FolderNode {
+        guard depth < folderTreeMaxDepth else {
+            return FolderNode(url: url)
+        }
+        let subdirs = libraryService.subdirectories(of: url)
+        let children = subdirs.map { buildFolderNode(url: $0, depth: depth + 1) }
+        return FolderNode(url: url, children: children)
+    }
+
+    var videosInSelectedFolder: [VideoFile] {
+        guard let selectedFolder else {
+            return videos
+        }
+        return videos.filter { $0.url.deletingLastPathComponent() == selectedFolder }
     }
 
     func videosInSameFolder(as video: VideoFile) -> [VideoFile] {

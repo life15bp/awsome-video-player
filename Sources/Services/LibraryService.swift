@@ -120,6 +120,21 @@ final class LibraryService {
         return "path:" + url.path
     }
 
+    /// 指定フォルダとそのサブフォルダ内の全動画をスキャン（ツリー選択用）
+    func scanVideosRecursively(in folder: URL, maxDepth: Int = 10) -> [VideoFile] {
+        var result: [VideoFile] = []
+        var queue: [(url: URL, depth: Int)] = [(folder, 0)]
+        while let current = queue.first {
+            queue.removeFirst()
+            if current.depth > maxDepth { continue }
+            result.append(contentsOf: scanVideos(in: current.url))
+            for sub in subdirectories(of: current.url) {
+                queue.append((sub, current.depth + 1))
+            }
+        }
+        return result
+    }
+
     func scanVideos(in folder: URL) -> [VideoFile] {
         let fileManager = FileManager.default
         guard let items = try? fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil) else {
@@ -156,6 +171,19 @@ final class LibraryService {
         }
 
         return videos
+    }
+
+    /// 指定フォルダの直下のサブディレクトリ一覧（1階層のみ）
+    func subdirectories(of url: URL) -> [URL] {
+        guard let items = try? fileManager.contentsOfDirectory(
+            at: url,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        ) else { return [] }
+        return items.compactMap { item in
+            guard (try? item.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true else { return nil }
+            return item
+        }.sorted { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending }
     }
 }
 

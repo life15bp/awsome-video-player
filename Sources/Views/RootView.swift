@@ -6,19 +6,11 @@ struct RootView: View {
 
     var body: some View {
         NavigationSplitView {
-            LibraryView(
-                videos: libraryViewModel.videos,
-                onVideoDoubleTap: { video in
-                    libraryViewModel.selectedVideo = video
-                    playerViewModel.load(file: video)
-                    playerViewModel.play()
-                },
-                onAddFolder: { url in
-                    libraryViewModel.addFolder(url: url)
-                }
-            )
+            LibraryView(onAddFolder: { url in
+                libraryViewModel.addFolder(url: url)
+            })
         } detail: {
-            PlayerView()
+            VideoListDetailView()
         }
     }
 }

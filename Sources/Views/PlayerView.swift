@@ -1,5 +1,47 @@
 import SwiftUI
 import AVKit
+import AppKit
+
+/// macOS 13 互換: スペースキーで再生/一時停止（onKeyPress は macOS 14 以降のため AppKit で監視）
+private struct KeySpaceHandlerView: NSViewRepresentable {
+    let onSpace: () -> Void
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        view.wantsLayer = true
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        let coord = context.coordinator
+        if coord.monitor == nil, nsView.window != nil {
+            coord.monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak coord] event in
+                guard event.keyCode == 49 else { return event }
+                coord?.onSpace()
+                return nil
+            }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onSpace: onSpace)
+    }
+
+    final class Coordinator {
+        var monitor: Any?
+        let onSpace: () -> Void
+
+        init(onSpace: @escaping () -> Void) {
+            self.onSpace = onSpace
+        }
+
+        deinit {
+            if let monitor = monitor {
+                NSEvent.removeMonitor(monitor)
+            }
+        }
+    }
+}
 
 struct PlayerView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
@@ -53,6 +95,9 @@ struct PlayerView: View {
             }
         }
         .padding()
+        .background(KeySpaceHandlerView(onSpace: {
+            playerViewModel.togglePlayPause()
+        }))
     }
 
     @ViewBuilder
@@ -62,6 +107,10 @@ struct PlayerView: View {
         VideoPlayer(player: player)
             .scaleEffect(viewport.scale)
             .offset(viewport.offset)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                playerViewModel.togglePlayPause()
+            }
             .gesture(
                 DragGesture()
                     .onChanged { value in

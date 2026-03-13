@@ -12,8 +12,14 @@ struct AwesomeVideoPlayerApp: App {
     )
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup("Library") {
             RootView()
+                .environmentObject(libraryViewModel)
+                .environmentObject(playerViewModel)
+        }
+
+        WindowGroup("Player", id: "playerWindow") {
+            PlayerView()
                 .environmentObject(libraryViewModel)
                 .environmentObject(playerViewModel)
         }
