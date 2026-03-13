@@ -139,4 +139,35 @@ final class PlayerViewModel: ObservableObject {
         favorites.removeAll { $0.id == snapshot.id }
         favoriteService.saveFavorites(favorites)
     }
+
+    // MARK: - Tags
+
+    func addTag(_ tag: String, to snapshot: FavoriteSnapshot) {
+        let trimmed = tag.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        guard let index = favorites.firstIndex(where: { $0.id == snapshot.id }) else { return }
+        if !favorites[index].tags.contains(trimmed) {
+            favorites[index].tags.append(trimmed)
+            favoriteService.saveFavorites(favorites)
+            objectWillChange.send()
+        }
+    }
+
+    func removeTag(_ tag: String, from snapshot: FavoriteSnapshot) {
+        guard let index = favorites.firstIndex(where: { $0.id == snapshot.id }) else { return }
+        favorites[index].tags.removeAll { $0 == tag }
+        favoriteService.saveFavorites(favorites)
+        objectWillChange.send()
+    }
+
+    /// 動画に紐づくタグ一覧（重複排除＋ソート）
+    func tagsForVideo(_ video: VideoFile) -> [String] {
+        let all = favorites
+            .filter { $0.videoId == video.id }
+            .flatMap { $0.tags }
+        return Array(Set(all)).sorted {
+            $0.localizedStandardCompare($1) == .orderedAscending
+        }
+    }
 }

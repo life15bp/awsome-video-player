@@ -31,45 +31,69 @@ struct VideoListDetailView: View {
     }
 
     private func videoRow(video: VideoFile) -> some View {
-        HStack(alignment: .top, spacing: 0) {
-            // 通常のサムネイル（左端固定）
-            VStack(alignment: .leading, spacing: 4) {
-                mainThumbnail(video: video)
-                    .onTapGesture {
-                        libraryViewModel.selectedVideo = video
-                        playerViewModel.load(file: video)
-                        openWindow(id: "playerWindow")
-                    }
-                Text(video.displayName)
-                    .font(.caption)
-                    .lineLimit(1)
-                    .foregroundColor(.secondary)
-            }
-            .frame(width: mainThumbSize.width, alignment: .leading)
-
-            // 縦線で区切り
-            Rectangle()
-                .fill(Color.secondary.opacity(0.3))
-                .frame(width: 1)
-                .padding(.horizontal, 8)
-
-            // お気に入り箇所サムネイル1 | 2 | 3 ...
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    ForEach(favoritesForVideo(video)) { snapshot in
-                        FavoriteSnapshotThumbnailView(
-                            video: video,
-                            snapshot: snapshot,
-                            size: favThumbSize,
-                            onDelete: { playerViewModel.removeFavorite(snapshot) }
-                        )
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .top, spacing: 0) {
+                // 通常のサムネイル（左端固定）
+                VStack(alignment: .leading, spacing: 4) {
+                    mainThumbnail(video: video)
                         .onTapGesture {
-                            playerViewModel.playSnapshot(snapshot, video: video)
+                            libraryViewModel.selectedVideo = video
+                            playerViewModel.load(file: video)
                             openWindow(id: "playerWindow")
                         }
+                    Text(video.displayName)
+                        .font(.caption)
+                        .lineLimit(1)
+                        .foregroundColor(.secondary)
+                }
+                .frame(width: mainThumbSize.width, alignment: .leading)
+
+                // 縦線で区切り
+                Rectangle()
+                    .fill(Color.secondary.opacity(0.3))
+                    .frame(width: 1)
+                    .padding(.horizontal, 8)
+
+                // お気に入り箇所サムネイル1 | 2 | 3 ...
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(favoritesForVideo(video)) { snapshot in
+                            FavoriteSnapshotThumbnailView(
+                                video: video,
+                                snapshot: snapshot,
+                                size: favThumbSize,
+                                onDelete: { playerViewModel.removeFavorite(snapshot) },
+                                onAddTag: { name in playerViewModel.addTag(name, to: snapshot) },
+                                onRemoveTag: { name in playerViewModel.removeTag(name, from: snapshot) }
+                            )
+                            .onTapGesture {
+                                playerViewModel.playSnapshot(snapshot, video: video)
+                                openWindow(id: "playerWindow")
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+
+            let tags = playerViewModel.tagsForVideo(video)
+            if !tags.isEmpty {
+                HStack(spacing: 4) {
+                    Text("タグ:")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    ForEach(tags, id: \.self) { tag in
+                        Text(tag)
+                            .font(.caption2)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule().fill(Color.secondary.opacity(0.2))
+                            )
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.leading, 8)
+                .padding(.bottom, 4)
             }
         }
         .padding(.vertical, 6)

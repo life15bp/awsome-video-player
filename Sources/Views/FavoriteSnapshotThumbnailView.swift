@@ -6,9 +6,13 @@ struct FavoriteSnapshotThumbnailView: View {
     let snapshot: FavoriteSnapshot
     let size: CGSize
     var onDelete: (() -> Void)?
+    var onAddTag: ((String) -> Void)?
+    var onRemoveTag: ((String) -> Void)?
 
     @State private var image: NSImage?
     @State private var isHovering = false
+    @State private var isEditingTag = false
+    @State private var newTagText = ""
 
     var body: some View {
         VStack(spacing: 2) {
@@ -41,10 +45,65 @@ struct FavoriteSnapshotThumbnailView: View {
             Text(timeLabel)
                 .font(.caption2)
                 .foregroundColor(.white)
+
+            // タグ一覧
+            HStack(spacing: 4) {
+                ForEach(snapshot.tags, id: \.self) { tag in
+                    HStack(spacing: 2) {
+                        Text(tag)
+                        if let onRemoveTag {
+                            Button {
+                                onRemoveTag(tag)
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .font(.caption2)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule().fill(Color.black.opacity(0.5))
+                    )
+                }
+
+                if onAddTag != nil {
+                    Button {
+                        isEditingTag = true
+                    } label: {
+                        Image(systemName: "plus.circle")
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        // macOS 13 だと popover 内の TextField がフォーカスを取りづらいことがあるので、
+        // 一旦 sheet で安定して文字入力できるようにする
+        .sheet(isPresented: $isEditingTag) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("タグを追加")
+                    .font(.headline)
+                TextField("タグ名", text: $newTagText, onCommit: commitNewTag)
+                HStack {
+                    Spacer()
+                    Button("追加") { commitNewTag() }
+                }
+            }
+            .padding()
+            .frame(width: 260)
         }
         .onAppear {
             loadIfNeeded()
         }
+    }
+
+    private func commitNewTag() {
+        let text = newTagText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty, let onAddTag else { return }
+        onAddTag(text)
+        newTagText = ""
+        isEditingTag = false
     }
 
     private var timeLabel: String {
