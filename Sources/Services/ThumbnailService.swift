@@ -26,9 +26,9 @@ final class ThumbnailService {
         completion: @escaping (NSImage?) -> Void
     ) {
         let seconds = timeSeconds ?? 1
-        // 時間は 0.1 秒単位に丸めてキーを安定させる
-        let bucketed = (seconds * 10).rounded() / 10
-        let key = "\(url.absoluteString)#t=\(bucketed)" as NSString
+        // キャッシュキーは要求した時刻をそのまま使う（丸めない）。近い時刻で別サムネイルの画像が表示されるズレを防ぐ
+        let timeKey = String(format: "%.3f", seconds)
+        let key = "\(url.absoluteString)#t=\(timeKey)" as NSString
 
         if let cached = cache.object(forKey: key) {
             completion(cached)
@@ -40,6 +40,8 @@ final class ThumbnailService {
             let imageGenerator = AVAssetImageGenerator(asset: asset)
             imageGenerator.appliesPreferredTrackTransform = true
             imageGenerator.maximumSize = targetSize
+            imageGenerator.requestedTimeToleranceBefore = .zero
+            imageGenerator.requestedTimeToleranceAfter = .zero
             let time = CMTime(seconds: seconds, preferredTimescale: 600)
 
             do {

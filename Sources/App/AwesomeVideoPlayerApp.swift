@@ -23,6 +23,17 @@ struct AwesomeVideoPlayerApp: App {
                 .environmentObject(libraryViewModel)
                 .environmentObject(playerViewModel)
         }
+        .commands {
+            CommandMenu("Playback") {
+                Button {
+                    playerViewModel.togglePlayPause()
+                } label: {
+                    Text("再生 / 一時停止")
+                }
+                // Cmd+D で再生/一時停止をトグル
+                .keyboardShortcut("d", modifiers: [.command])
+            }
+        }
     }
 }
 

@@ -2,27 +2,10 @@ import SwiftUI
 import AVKit
 import AppKit
 
-/// ホバー時に薄い黒のオーバーレイを出さないプレーヤー表示（AVPlayerView の controlsStyle = .none）
-private struct PlainAVPlayerView: NSViewRepresentable {
-    let player: AVPlayer?
-
-    func makeNSView(context: Context) -> AVPlayerView {
-        let view = AVPlayerView()
-        view.controlsStyle = .none
-        view.player = player
-        return view
-    }
-
-    func updateNSView(_ nsView: AVPlayerView, context: Context) {
-        nsView.player = player
-    }
-}
-
 struct PlayerView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @State private var lastDragOffset: CGSize = .zero
-    @State private var keyMonitor: Any?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -73,22 +56,6 @@ struct PlayerView: View {
             }
         }
         .padding()
-        .onAppear {
-            // スペースキー(キーコード 49)で再生/一時停止をトグル
-            if keyMonitor == nil {
-                keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                    guard event.keyCode == 49 else { return event }
-                    playerViewModel.togglePlayPause()
-                    return nil
-                }
-            }
-        }
-        .onDisappear {
-            if let monitor = keyMonitor {
-                NSEvent.removeMonitor(monitor)
-                keyMonitor = nil
-            }
-        }
     }
 
     private var playbackBar: some View {
@@ -119,7 +86,7 @@ struct PlayerView: View {
     private func videoContent(player: AVPlayer) -> some View {
         let viewport = playerViewModel.viewport
 
-        PlainAVPlayerView(player: player)
+        VideoPlayer(player: player)
             .scaleEffect(viewport.scale)
             .offset(viewport.offset)
             .contentShape(Rectangle())

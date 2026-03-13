@@ -66,7 +66,7 @@ struct LibraryView: View {
             )
             .contentShape(Rectangle())
             .padding(.leading, indent)
-            .onTapGesture {
+            .  onTapGesture {
                 libraryViewModel.selectedFolder = node.url
             }
 
