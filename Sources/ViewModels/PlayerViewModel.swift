@@ -170,4 +170,25 @@ final class PlayerViewModel: ObservableObject {
             $0.localizedStandardCompare($1) == .orderedAscending
         }
     }
+
+    // MARK: - お気に入り中のお気に入り（メインサムネイル）
+
+    /// この動画でメインサムネイルに使うお気に入り（1本あたり1つまで）
+    func primaryThumbnailSnapshot(for video: VideoFile) -> FavoriteSnapshot? {
+        favorites.first { $0.videoId == video.id && $0.useAsVideoThumbnail }
+    }
+
+    /// メインサムネイルに使う時刻（未設定なら nil → デフォルトは先頭付近）
+    func primaryThumbnailTime(for video: VideoFile) -> Double? {
+        primaryThumbnailSnapshot(for: video)?.timeSeconds
+    }
+
+    /// 指定したお気に入りを「動画のメインサムネイル」に設定する（お気に入り中のお気に入り）
+    func setAsMainThumbnail(_ snapshot: FavoriteSnapshot) {
+        for i in favorites.indices {
+            favorites[i].useAsVideoThumbnail = (favorites[i].id == snapshot.id && favorites[i].videoId == snapshot.videoId)
+        }
+        favoriteService.saveFavorites(favorites)
+        objectWillChange.send()
+    }
 }

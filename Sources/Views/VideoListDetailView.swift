@@ -62,7 +62,9 @@ struct VideoListDetailView: View {
                                 video: video,
                                 snapshot: snapshot,
                                 size: favThumbSize,
+                                isPrimaryThumbnail: playerViewModel.primaryThumbnailSnapshot(for: video)?.id == snapshot.id,
                                 onDelete: { playerViewModel.removeFavorite(snapshot) },
+                                onSetAsMainThumbnail: { playerViewModel.setAsMainThumbnail(snapshot) },
                                 onAddTag: { name in playerViewModel.addTag(name, to: snapshot) },
                                 onRemoveTag: { name in playerViewModel.removeTag(name, from: snapshot) }
                             )
@@ -103,7 +105,7 @@ struct VideoListDetailView: View {
 
     private func mainThumbnail(video: VideoFile) -> some View {
         Group {
-            if let image = libraryViewModel.thumbnail(for: video, targetSize: mainThumbSize) {
+            if let image = libraryViewModel.thumbnail(for: video, at: playerViewModel.primaryThumbnailTime(for: video), targetSize: mainThumbSize) {
                 Image(nsImage: image)
                     .resizable()
                     .scaledToFill()

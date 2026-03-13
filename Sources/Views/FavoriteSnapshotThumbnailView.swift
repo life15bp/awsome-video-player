@@ -5,7 +5,10 @@ struct FavoriteSnapshotThumbnailView: View {
     let video: VideoFile
     let snapshot: FavoriteSnapshot
     let size: CGSize
+    /// このお気に入りが動画のメインサムネイルに選ばれているか（お気に入り中のお気に入り）
+    var isPrimaryThumbnail: Bool = false
     var onDelete: (() -> Void)?
+    var onSetAsMainThumbnail: (() -> Void)?
     var onAddTag: ((String) -> Void)?
     var onRemoveTag: ((String) -> Void)?
 
@@ -16,7 +19,7 @@ struct FavoriteSnapshotThumbnailView: View {
 
     var body: some View {
         VStack(spacing: 2) {
-            ZStack(alignment: .topTrailing) {
+            ZStack(alignment: .topLeading) {
                 if let image {
                     Image(nsImage: image)
                         .resizable()
@@ -27,15 +30,28 @@ struct FavoriteSnapshotThumbnailView: View {
                     ProgressView()
                 }
 
-                if onDelete != nil, isHovering {
-                    Button(action: { onDelete?() }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(.white)
-                            .symbolRenderingMode(.hierarchical)
+                HStack {
+                    if onSetAsMainThumbnail != nil {
+                        Button(action: { onSetAsMainThumbnail?() }) {
+                            Image(systemName: isPrimaryThumbnail ? "star.fill" : "star")
+                                .font(.title3)
+                                .foregroundStyle(isPrimaryThumbnail ? Color.yellow : .white.opacity(0.8))
+                                .symbolRenderingMode(.hierarchical)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(4)
                     }
-                    .buttonStyle(.plain)
-                    .padding(4)
+                    Spacer()
+                    if onDelete != nil, isHovering {
+                        Button(action: { onDelete?() }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(.white)
+                                .symbolRenderingMode(.hierarchical)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(4)
+                    }
                 }
             }
             .frame(width: size.width, height: size.height)

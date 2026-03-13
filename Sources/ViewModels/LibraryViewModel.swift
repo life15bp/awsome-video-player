@@ -7,7 +7,6 @@ final class LibraryViewModel: ObservableObject {
     @Published private(set) var videos: [VideoFile] = []
     @Published var selectedVideo: VideoFile?
     @Published var selectedFolder: URL?
-    @Published private(set) var thumbnails: [UUID: NSImage] = [:]
     @Published private(set) var folderTree: [FolderNode] = []
 
     private let libraryService: LibraryService
@@ -50,7 +49,7 @@ final class LibraryViewModel: ObservableObject {
 
     func refreshAllVideos() {
         videos = folders.flatMap { libraryService.scanVideosRecursively(in: $0) }
-        thumbnails = [:]
+        _thumbnailsByKey = [:]
         folderTree = folders.map { buildFolderNode(url: $0, depth: 0) }
     }
 
@@ -78,18 +77,38 @@ final class LibraryViewModel: ObservableObject {
         return videos.filter { $0.url.deletingLastPathComponent() == folder }
     }
 
-    func thumbnail(for video: VideoFile, targetSize: CGSize = .init(width: 320, height: 180)) -> NSImage? {
-        if let image = thumbnails[video.id] {
+    /// Retina 用に要求サイズをスケール（メインサムネイルの画質を他と揃える）
+    private static var thumbnailScale: CGFloat {
+        NSScreen.main?.backingScaleFactor ?? 2
+    }
+
+    /// 動画のサムネイル。preferredTime を指定するとその時刻のフレームを使用（お気に入り中のお気に入り用）
+    func thumbnail(for video: VideoFile, at preferredTime: Double? = nil, targetSize: CGSize = .init(width: 320, height: 180)) -> NSImage? {
+        let timeKey = preferredTime.map { String(format: "%.3f", $0) } ?? "0"
+        let cacheKey = "\(video.id.uuidString)#\(timeKey)"
+        if let image = thumbnailsByKey[cacheKey] {
             return image
         }
 
-        thumbnailService.thumbnail(for: video.url, targetSize: targetSize) { [weak self] image in
+        let pixelSize = CGSize(
+            width: targetSize.width * Self.thumbnailScale,
+            height: targetSize.height * Self.thumbnailScale
+        )
+        thumbnailService.thumbnail(for: video.url, at: preferredTime ?? 0, targetSize: pixelSize) { [weak self] image in
             guard let self, let image else { return }
-            self.thumbnails[video.id] = image
+            self.thumbnailsByKey[cacheKey] = image
+            self.objectWillChange.send()
         }
 
         return nil
     }
+
+    /// サムネイルキャッシュ（videoId#時刻 をキーに統一）
+    private var thumbnailsByKey: [String: NSImage] {
+        get { _thumbnailsByKey }
+        set { _thumbnailsByKey = newValue }
+    }
+    @Published private var _thumbnailsByKey: [String: NSImage] = [:]
 }
 
 private extension String {
