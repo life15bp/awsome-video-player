@@ -60,7 +60,8 @@ struct VideoListDetailView: View {
                         FavoriteSnapshotThumbnailView(
                             video: video,
                             snapshot: snapshot,
-                            size: favThumbSize
+                            size: favThumbSize,
+                            onDelete: { playerViewModel.removeFavorite(snapshot) }
                         )
                         .onTapGesture {
                             playerViewModel.playSnapshot(snapshot, video: video)

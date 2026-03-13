@@ -134,4 +134,9 @@ final class PlayerViewModel: ObservableObject {
     func seek(to snapshot: FavoriteSnapshot) {
         playbackService.seek(to: snapshot.timeSeconds)
     }
+
+    func removeFavorite(_ snapshot: FavoriteSnapshot) {
+        favorites.removeAll { $0.id == snapshot.id }
+        favoriteService.saveFavorites(favorites)
+    }
 }

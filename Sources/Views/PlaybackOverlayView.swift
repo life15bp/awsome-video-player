@@ -31,7 +31,8 @@ struct PlaybackOverlayView: View {
                                 FavoriteSnapshotThumbnailView(
                                     video: video,
                                     snapshot: snapshot,
-                                    size: favoriteThumbnailSize
+                                    size: favoriteThumbnailSize,
+                                    onDelete: { playerViewModel.removeFavorite(snapshot) }
                                 )
                                 .onTapGesture {
                                     playerViewModel.seek(to: snapshot)
