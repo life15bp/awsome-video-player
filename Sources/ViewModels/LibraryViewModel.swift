@@ -123,6 +123,36 @@ final class LibraryViewModel: ObservableObject {
         return true
     }
 
+    /// フォルダ名を変更する。ルートの場合は保存済みフォルダ一覧も更新する。
+    /// - Returns: 成功時は (true, nil)、失敗時は (false, 表示用エラー文言)
+    func renameFolder(at url: URL, to newName: String) -> (success: Bool, errorMessage: String?) {
+        let result = libraryService.renameFolder(at: url, to: newName)
+        guard result.success else { return result }
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let newURL = url.deletingLastPathComponent().appendingPathComponent(trimmed).standardizedFileURL
+        let oldPath = url.standardizedFileURL.path.trimmingTrailingSlash()
+        let newPath = newURL.path.trimmingTrailingSlash()
+
+        if isRootFolder(url) {
+            if let i = folders.firstIndex(where: { $0.standardizedFileURL.path.trimmingTrailingSlash() == oldPath }) {
+                folders[i] = newURL
+                libraryService.saveFolders(folders)
+            }
+        }
+
+        if let sel = selectedFolder {
+            let selPath = sel.standardizedFileURL.path.trimmingTrailingSlash()
+            if selPath == oldPath {
+                selectedFolder = newURL
+            } else if selPath.hasPrefix(oldPath + "/") {
+                let suffix = String(selPath.dropFirst(oldPath.count))
+                selectedFolder = URL(fileURLWithPath: newPath + suffix)
+            }
+        }
+        refreshAllVideos()
+        return (true, nil)
+    }
+
     /// 指定フォルダの直下に子フォルダを新規作成する。作成後にツリーを再構築する。
     /// - Returns: 成功時は (true, nil)、失敗時は (false, 表示用エラー文言)
     func createSubfolder(name: String, under parentURL: URL) -> (success: Bool, errorMessage: String?) {

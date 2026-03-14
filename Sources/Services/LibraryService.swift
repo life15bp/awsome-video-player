@@ -283,6 +283,27 @@ final class LibraryService {
         return true
     }
 
+    /// フォルダの名前を変更する（同一親フォルダ内でリネーム）。
+    /// - Returns: 成功時は (true, nil)、失敗時は (false, エラー文言)
+    func renameFolder(at url: URL, to newName: String) -> (success: Bool, errorMessage: String?) {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !trimmed.contains("/"), trimmed != ".", trimmed != ".." else {
+            return (false, "フォルダ名が不正です。")
+        }
+        let parent = url.deletingLastPathComponent()
+        let newURL = parent.appendingPathComponent(trimmed)
+        guard newURL.standardizedFileURL != url.standardizedFileURL else { return (true, nil) }
+        guard !fileManager.fileExists(atPath: newURL.path) else {
+            return (false, "「\(trimmed)」は既に存在します。")
+        }
+        do {
+            try fileManager.moveItem(at: url, to: newURL)
+            return (true, nil)
+        } catch {
+            return (false, error.localizedDescription)
+        }
+    }
+
     /// 指定フォルダの直下に子フォルダを新規作成する。
     /// - Returns: 成功時は (true, nil)、失敗時は (false, エラー文言)
     func createSubfolder(name: String, under parentURL: URL) -> (success: Bool, errorMessage: String?) {

@@ -224,6 +224,9 @@ struct LibraryView: View {
                 Button("Reveal in Finder") {
                     NSWorkspace.shared.activateFileViewerSelecting([node.url])
                 }
+                Button("フォルダ名の変更…") {
+                    showRenameFolderAlert(url: node.url, currentName: node.name)
+                }
                 Button("子フォルダを作成…") {
                     showNewFolderAlert(parentURL: node.url)
                 }
@@ -326,6 +329,33 @@ struct LibraryView: View {
                 err.informativeText = "フォルダの権限を確認してください。"
                 err.alertStyle = .warning
                 err.runModal()
+            }
+        }
+    }
+
+    /// フォルダ名変更ダイアログ
+    private func showRenameFolderAlert(url: URL, currentName: String) {
+        let alert = NSAlert()
+        alert.messageText = "フォルダ名の変更"
+        alert.informativeText = "新しいフォルダ名を入力してください。"
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 280, height: 22))
+        textField.stringValue = currentName
+        textField.placeholderString = "フォルダ名"
+        alert.accessoryView = textField
+        alert.addButton(withTitle: "変更")
+        alert.addButton(withTitle: "キャンセル")
+        alert.window.initialFirstResponder = textField
+        if alert.runModal() == .alertFirstButtonReturn {
+            let newName = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !newName.isEmpty {
+                let result = libraryViewModel.renameFolder(at: url, to: newName)
+                if !result.success {
+                    let err = NSAlert()
+                    err.messageText = "フォルダ名を変更できませんでした"
+                    err.informativeText = result.errorMessage ?? "権限を確認してください。"
+                    err.alertStyle = .warning
+                    err.runModal()
+                }
             }
         }
     }
