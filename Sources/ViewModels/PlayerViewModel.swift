@@ -36,6 +36,7 @@ final class PlayerViewModel: ObservableObject {
         player = playbackService.player
         viewport = ViewportState()
         isPlaying = false
+        play()
     }
 
     var favoritesForCurrentFile: [FavoriteSnapshot] {
