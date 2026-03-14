@@ -30,7 +30,13 @@ struct AwesomeVideoPlayerApp: App {
                 } label: {
                     Text("再生 / 一時停止")
                 }
-                // Cmd+D で再生/一時停止をトグル
+                .keyboardShortcut(.space, modifiers: [])
+
+                Button {
+                    playerViewModel.addFavoriteAtCurrentTime()
+                } label: {
+                    Text("お気に入りに追加")
+                }
                 .keyboardShortcut("d", modifiers: [.command])
             }
         }
