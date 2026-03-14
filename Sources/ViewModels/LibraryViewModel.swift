@@ -46,7 +46,7 @@ final class LibraryViewModel: ObservableObject {
         return folders.contains { $0.standardizedFileURL.path.trimmingTrailingSlash() == path }
     }
 
-    /// ライブラリからフォルダを削除（ルートフォルダのみ）
+    /// ライブラリからフォルダを削除（ルートフォルダのみ。ディスクには残る）
     func removeFolder(_ url: URL) {
         let path = url.standardizedFileURL.path.trimmingTrailingSlash()
         folders.removeAll { $0.standardizedFileURL.path.trimmingTrailingSlash() == path }
@@ -55,6 +55,24 @@ final class LibraryViewModel: ObservableObject {
             selectedFolder = folders.first
         }
         refreshAllVideos()
+    }
+
+    /// フォルダをゴミ箱へ移動する（子フォルダ用。中身ごとゴミ箱へ）
+    /// - Returns: 成功したら true
+    func deleteFolder(at url: URL) -> Bool {
+        let standardized = url.standardizedFileURL
+        do {
+            try FileManager.default.trashItem(at: standardized, resultingItemURL: nil)
+            let deletedPath = standardized.path.trimmingTrailingSlash()
+            if selectedFolder?.standardizedFileURL.path.trimmingTrailingSlash() == deletedPath
+                || selectedFolder?.standardizedFileURL.path.hasPrefix(deletedPath + "/") == true {
+                selectedFolder = folders.first
+            }
+            refreshAllVideos()
+            return true
+        } catch {
+            return false
+        }
     }
 
     /// 追加したフォルダの並び順を変更する（ルートのみ、D&D 並べ替え用）
@@ -82,6 +100,18 @@ final class LibraryViewModel: ObservableObject {
         guard libraryService.moveVideo(video, toDestinationFolder: folderURL) else { return false }
         refreshAllVideos()
         return true
+    }
+
+    /// 動画ファイルをゴミ箱へ移動する。
+    /// - Returns: 成功したら true
+    func deleteVideo(_ video: VideoFile) -> Bool {
+        do {
+            try FileManager.default.trashItem(at: video.url, resultingItemURL: nil)
+            refreshAllVideos()
+            return true
+        } catch {
+            return false
+        }
     }
 
     /// 指定フォルダの直下に子フォルダを新規作成する。作成後にツリーを再構築する。

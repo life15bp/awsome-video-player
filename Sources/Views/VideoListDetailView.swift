@@ -139,6 +139,35 @@ struct VideoListDetailView: View {
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
         .background(Color.primary.opacity(0.03))
+        .contextMenu {
+            Button("Reveal in Finder") {
+                NSWorkspace.shared.activateFileViewerSelecting([video.url])
+            }
+            Button("削除", role: .destructive) {
+                confirmAndDeleteVideo(video)
+            }
+        }
+    }
+
+    private func confirmAndDeleteVideo(_ video: VideoFile) {
+        let alert = NSAlert()
+        alert.messageText = "動画を削除しますか？"
+        alert.informativeText = "「\(video.displayName)」をゴミ箱に移動します。"
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "削除")
+        alert.addButton(withTitle: "キャンセル")
+        if alert.runModal() == .alertFirstButtonReturn {
+            playerViewModel.removeFavoritesForVideo(videoId: video.id)
+            if libraryViewModel.deleteVideo(video) {
+                // 削除完了
+            } else {
+                let err = NSAlert()
+                err.messageText = "ゴミ箱に移動できませんでした"
+                err.informativeText = "ファイルの権限を確認してください。"
+                err.alertStyle = .warning
+                err.runModal()
+            }
+        }
     }
 
     private func mainThumbnail(video: VideoFile) -> some View {

@@ -221,13 +221,20 @@ struct LibraryView: View {
             }
             .modifier(RootFolderDragModifier(isRoot: isRoot, rootIndex: rootIndex))
             .contextMenu {
+                Button("Reveal in Finder") {
+                    NSWorkspace.shared.activateFileViewerSelecting([node.url])
+                }
                 Button("子フォルダを作成…") {
                     showNewFolderAlert(parentURL: node.url)
                 }
+                Divider()
                 if libraryViewModel.isRootFolder(node.url) {
-                    Divider()
                     Button("ライブラリから削除", role: .destructive) {
                         libraryViewModel.removeFolder(node.url)
+                    }
+                } else {
+                    Button("削除", role: .destructive) {
+                        confirmAndDeleteFolder(node.url, name: node.name)
                     }
                 }
             }
@@ -300,6 +307,25 @@ struct LibraryView: View {
                     errAlert.alertStyle = .warning
                     errAlert.runModal()
                 }
+            }
+        }
+    }
+
+    /// 子フォルダをゴミ箱へ移動する確認ダイアログ
+    private func confirmAndDeleteFolder(_ url: URL, name: String) {
+        let alert = NSAlert()
+        alert.messageText = "フォルダを削除しますか？"
+        alert.informativeText = "「\(name)」をゴミ箱に移動します。フォルダ内のファイルも一緒に移動します。"
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "削除")
+        alert.addButton(withTitle: "キャンセル")
+        if alert.runModal() == .alertFirstButtonReturn {
+            if !libraryViewModel.deleteFolder(at: url) {
+                let err = NSAlert()
+                err.messageText = "ゴミ箱に移動できませんでした"
+                err.informativeText = "フォルダの権限を確認してください。"
+                err.alertStyle = .warning
+                err.runModal()
             }
         }
     }

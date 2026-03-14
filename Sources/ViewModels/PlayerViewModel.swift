@@ -143,6 +143,13 @@ final class PlayerViewModel: ObservableObject {
         favoriteService.saveFavorites(favorites)
     }
 
+    /// 指定動画に紐づくお気に入りをすべて削除（動画ファイル削除時に呼ぶ）
+    func removeFavoritesForVideo(videoId: UUID) {
+        favorites.removeAll { $0.videoId == videoId }
+        favoriteService.saveFavorites(favorites)
+        objectWillChange.send()
+    }
+
     // MARK: - Tags
 
     func addTag(_ tag: String, to snapshot: FavoriteSnapshot) {
