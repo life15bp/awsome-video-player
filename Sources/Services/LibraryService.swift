@@ -283,6 +283,25 @@ final class LibraryService {
         return true
     }
 
+    /// フォルダを別フォルダの中へ移動する。
+    /// - Returns: 成功したら true（自分自身や配下への移動は失敗）
+    func moveFolder(from sourceFolder: URL, toDestinationFolder destinationFolder: URL) -> Bool {
+        let src = sourceFolder.standardizedFileURL
+        let dst = destinationFolder.standardizedFileURL
+        let srcPath = src.path.hasSuffix("/") && src.path.count > 1 ? String(src.path.dropLast()) : src.path
+        let dstPath = dst.path.hasSuffix("/") && dst.path.count > 1 ? String(dst.path.dropLast()) : dst.path
+        guard srcPath != dstPath else { return false }
+        guard !dstPath.hasPrefix(srcPath + "/") else { return false }
+        let destURL = dst.appendingPathComponent(src.lastPathComponent)
+        guard !fileManager.fileExists(atPath: destURL.path) else { return false }
+        do {
+            try fileManager.moveItem(at: src, to: destURL)
+            return true
+        } catch {
+            return false
+        }
+    }
+
     /// フォルダの名前を変更する（同一親フォルダ内でリネーム）。
     /// - Returns: 成功時は (true, nil)、失敗時は (false, エラー文言)
     func renameFolder(at url: URL, to newName: String) -> (success: Bool, errorMessage: String?) {

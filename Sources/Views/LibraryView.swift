@@ -6,21 +6,21 @@ import UniformTypeIdentifiers
 private let videoIdDragPrefix = "avp-video-id:"
 /// フォルダ並べ替え用ドラッグのプレフィックス（ルートフォルダの index）
 private let folderOrderDragPrefix = "avp-folder-order:"
+/// フォルダ移動・並べ替え用（path とオプションでルート index）
+private let folderDragPrefix = "avp-folder:"
 /// タグ並べ替え用ドラッグのプレフィックス（タグ名を渡す）
 private let tagOrderDragPrefix = "avp-tag:"
 
-/// ルートフォルダのときだけドラッグで並べ替え用データを渡す
-private struct RootFolderDragModifier: ViewModifier {
-    let isRoot: Bool
+/// フォルダ行をドラッグ可能に（フォルダの移動とルートの並べ替えの両方に対応）
+private struct FolderDragModifier: ViewModifier {
+    let node: FolderNode
     let rootIndex: Int?
 
     func body(content: Content) -> some View {
-        if isRoot, let idx = rootIndex {
-            content.onDrag {
-                NSItemProvider(object: (folderOrderDragPrefix + String(idx)) as NSString)
-            }
-        } else {
-            content
+        content.onDrag {
+            let path = node.url.path
+            let payload = rootIndex.map { folderDragPrefix + path + "|" + String($0) } ?? (folderDragPrefix + path)
+            return NSItemProvider(object: payload as NSString)
         }
     }
 }
@@ -219,7 +219,7 @@ struct LibraryView: View {
             )) { providers in
                 acceptDrop(providers: providers, folderURL: node.url, folderRootIndex: rootIndex)
             }
-            .modifier(RootFolderDragModifier(isRoot: isRoot, rootIndex: rootIndex))
+            .modifier(FolderDragModifier(node: node, rootIndex: rootIndex))
             .contextMenu {
                 Button("Reveal in Finder") {
                     NSWorkspace.shared.activateFileViewerSelecting([node.url])
@@ -257,7 +257,24 @@ struct LibraryView: View {
         _ = provider.loadObject(ofClass: String.self) { obj, _ in
             guard let s = obj as? String else { return }
             DispatchQueue.main.async {
-                if s.hasPrefix(folderOrderDragPrefix), let destIndex = folderRootIndex {
+                if s.hasPrefix(folderDragPrefix) {
+                    let rest = String(s.dropFirst(folderDragPrefix.count))
+                    let sourcePath: String
+                    let sourceRootIndex: Int?
+                    if let lastBar = rest.lastIndex(of: "|") {
+                        sourcePath = String(rest[..<lastBar])
+                        sourceRootIndex = Int(rest[rest.index(after: lastBar)...])
+                    } else {
+                        sourcePath = rest
+                        sourceRootIndex = nil
+                    }
+                    if let srcIdx = sourceRootIndex, let destIdx = folderRootIndex {
+                        libraryViewModel.reorderFolders(from: srcIdx, to: destIdx)
+                    } else {
+                        let sourceURL = URL(fileURLWithPath: sourcePath)
+                        _ = libraryViewModel.moveFolder(from: sourceURL, to: folderURL)
+                    }
+                } else if s.hasPrefix(folderOrderDragPrefix), let destIndex = folderRootIndex {
                     let rest = String(s.dropFirst(folderOrderDragPrefix.count))
                     guard let sourceIndex = Int(rest) else { return }
                     libraryViewModel.reorderFolders(from: sourceIndex, to: destIndex)

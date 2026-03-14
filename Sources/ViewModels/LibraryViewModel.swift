@@ -75,6 +75,27 @@ final class LibraryViewModel: ObservableObject {
         }
     }
 
+    /// フォルダを別フォルダの中へ移動する（D&D 用）。ルートの場合はライブラリ一覧からも外す。
+    /// - Returns: 成功したら true
+    func moveFolder(from sourceFolder: URL, to destinationFolder: URL) -> Bool {
+        guard libraryService.moveFolder(from: sourceFolder, toDestinationFolder: destinationFolder) else {
+            return false
+        }
+        let oldPath = sourceFolder.standardizedFileURL.path.trimmingTrailingSlash()
+        if isRootFolder(sourceFolder) {
+            folders.removeAll { $0.standardizedFileURL.path.trimmingTrailingSlash() == oldPath }
+            libraryService.saveFolders(folders)
+        }
+        if let sel = selectedFolder {
+            let selPath = sel.standardizedFileURL.path.trimmingTrailingSlash()
+            if selPath == oldPath || selPath.hasPrefix(oldPath + "/") {
+                selectedFolder = folders.first
+            }
+        }
+        refreshAllVideos()
+        return true
+    }
+
     /// 追加したフォルダの並び順を変更する（ルートのみ、D&D 並べ替え用）
     func reorderFolders(from sourceIndex: Int, to destinationIndex: Int) {
         guard sourceIndex != destinationIndex,
