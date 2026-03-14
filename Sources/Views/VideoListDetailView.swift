@@ -15,19 +15,35 @@ struct VideoListDetailView: View {
     private let mainThumbSize = CGSize(width: 200, height: 112)
     private let favThumbSize = CGSize(width: 160, height: 90)
 
+    /// 左ペインのタブ・選択に応じた表示用動画一覧
+    private var displayedVideos: [VideoFile] {
+        switch libraryViewModel.leftPaneTab {
+        case .folder:
+            return libraryViewModel.videosInSelectedFolder
+        case .tag:
+            if let tag = libraryViewModel.selectedTagForFilter {
+                return libraryViewModel.videos.filter { playerViewModel.videoIdsWithTag(tag).contains($0.id) }
+            } else {
+                return libraryViewModel.videos.filter { playerViewModel.videoIdsWithAtLeastOneFavorite.contains($0.id) }
+            }
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if libraryViewModel.selectedFolder == nil {
-                emptyMessage("左でフォルダを選択してください")
-            } else if libraryViewModel.videosInSelectedFolder.isEmpty {
-                emptyMessage("このフォルダに動画はありません")
+            if libraryViewModel.leftPaneTab == .folder {
+                if libraryViewModel.selectedFolder == nil {
+                    emptyMessage("左でフォルダを選択してください")
+                } else if displayedVideos.isEmpty {
+                    emptyMessage("このフォルダに動画はありません")
+                } else {
+                    listContent
+                }
             } else {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        ForEach(libraryViewModel.videosInSelectedFolder) { video in
-                            videoRow(video: video)
-                        }
-                    }
+                if displayedVideos.isEmpty {
+                    emptyMessage("該当する動画はありません")
+                } else {
+                    listContent
                 }
             }
         }
@@ -35,6 +51,16 @@ struct VideoListDetailView: View {
         .onChange(of: libraryViewModel.selectedFolder) { _ in
             DispatchQueue.main.async {
                 playerViewModel.reloadFavoritesFromDisk()
+            }
+        }
+    }
+
+    private var listContent: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(displayedVideos) { video in
+                    videoRow(video: video)
+                }
             }
         }
     }

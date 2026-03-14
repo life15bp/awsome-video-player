@@ -171,6 +171,22 @@ final class PlayerViewModel: ObservableObject {
         }
     }
 
+    /// お気に入りが1つ以上ある動画の videoId 一覧（タグタブ「お気に入り」フィルタ用）
+    var videoIdsWithAtLeastOneFavorite: Set<UUID> {
+        Set(favorites.map(\.videoId))
+    }
+
+    /// 指定タグが付いたお気に入りがある動画の videoId 一覧
+    func videoIdsWithTag(_ tag: String) -> Set<UUID> {
+        Set(favorites.filter { $0.tags.contains(tag) }.map(\.videoId))
+    }
+
+    /// 全お気に入りで使われているタグ一覧（重複排除・ソート）
+    var allTags: [String] {
+        let tags = favorites.flatMap(\.tags)
+        return Array(Set(tags)).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+    }
+
     // MARK: - お気に入り中のお気に入り（メインサムネイル）
 
     /// この動画でメインサムネイルに使うお気に入り（1本あたり1つまで）

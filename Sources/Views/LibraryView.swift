@@ -25,6 +25,7 @@ private struct RootFolderDragModifier: ViewModifier {
 
 struct LibraryView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
+    @EnvironmentObject private var playerViewModel: PlayerViewModel
 
     let onAddFolder: (URL) -> Void
 
@@ -35,9 +36,63 @@ struct LibraryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             header
-            folderTreeView
+            leftPaneTabPicker
+            if libraryViewModel.leftPaneTab == .folder {
+                folderTreeView
+            } else {
+                tagFilterView
+            }
         }
         .padding()
+    }
+
+    /// フォルダ / タグ のタブ切り替え
+    private var leftPaneTabPicker: some View {
+        Picker("", selection: $libraryViewModel.leftPaneTab) {
+            ForEach(LeftPaneTab.allCases, id: \.self) { tab in
+                Text(tab.rawValue).tag(tab)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.bottom, 4)
+    }
+
+    /// タグタブ: 「お気に入り」＋タグ一覧でフィルタ選択
+    private var tagFilterView: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("フィルタ")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 2) {
+                    tagFilterRow(label: "お気に入り", isSelected: libraryViewModel.selectedTagForFilter == nil) {
+                        libraryViewModel.selectedTagForFilter = nil
+                    }
+                    ForEach(playerViewModel.allTags, id: \.self) { tag in
+                        tagFilterRow(label: tag, isSelected: libraryViewModel.selectedTagForFilter == tag) {
+                            libraryViewModel.selectedTagForFilter = tag
+                        }
+                    }
+                }
+            }
+        }
+        .frame(minWidth: 200)
+    }
+
+    private func tagFilterRow(label: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Text(label)
+            .lineLimit(1)
+            .font(.callout)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(isSelected ? Color.accentColor.opacity(0.2) : Color.clear)
+            )
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
     }
 
     private var header: some View {

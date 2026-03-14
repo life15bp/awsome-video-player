@@ -2,12 +2,22 @@ import Foundation
 import AppKit
 import Combine
 
+/// 左ペインのタブ種別
+enum LeftPaneTab: String, CaseIterable {
+    case folder = "フォルダ"
+    case tag = "タグ"
+}
+
 final class LibraryViewModel: ObservableObject {
     @Published private(set) var folders: [URL] = []
     @Published private(set) var videos: [VideoFile] = []
     @Published var selectedVideo: VideoFile?
     @Published var selectedFolder: URL?
     @Published private(set) var folderTree: [FolderNode] = []
+    /// 左ペインでフォルダ／タグのどちらを表示するか
+    @Published var leftPaneTab: LeftPaneTab = .folder
+    /// タグタブで選択中のフィルタ。nil = 「お気に入り」（お気に入りが1つ以上ある動画）、非nil = そのタグが付いた動画
+    @Published var selectedTagForFilter: String? = nil
 
     private let libraryService: LibraryService
     private let thumbnailService: ThumbnailService
