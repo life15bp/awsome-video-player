@@ -1,5 +1,9 @@
 import SwiftUI
 import AppKit
+import UniformTypeIdentifiers
+
+/// 動画行ドラッグ時のプレフィックス（LibraryView の onDrop と一致させる）
+private let videoIdDragPrefix = "avp-video-id:"
 
 /// メインウィンドウ右側: 選択フォルダ内の動画を1行ずつ表示。各行 = 通常サムネイル | お気に入りサムネイル1 | 2 | 3 ...
 /// お気に入りがなくても動画は一覧に表示する。
@@ -33,13 +37,16 @@ struct VideoListDetailView: View {
     private func videoRow(video: VideoFile) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .top, spacing: 0) {
-                // 通常のサムネイル（左端固定）
+                // 通常のサムネイル（左端固定）— ここをドラッグして左ペインのフォルダへ移動できる
                 VStack(alignment: .leading, spacing: 4) {
                     mainThumbnail(video: video)
                         .onTapGesture {
                             libraryViewModel.selectedVideo = video
                             playerViewModel.load(file: video)
                             openWindow(id: "playerWindow")
+                        }
+                        .onDrag {
+                            NSItemProvider(object: (videoIdDragPrefix + video.id.uuidString) as NSString)
                         }
                     Text(video.displayName)
                         .font(.caption)

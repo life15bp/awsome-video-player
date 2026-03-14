@@ -236,6 +236,49 @@ final class LibraryService {
         return videos
     }
 
+    /// 動画ファイルを別フォルダへ移動する。お気に入り・タグは videoId で紐づくため identity を更新すれば保持される。
+    /// - Returns: 成功したら true、失敗（権限・既存ファイルなど）なら false
+    func moveVideo(_ video: VideoFile, toDestinationFolder destinationFolder: URL) -> Bool {
+        let sourceURL = video.url
+        let destinationURL = destinationFolder.appendingPathComponent(sourceURL.lastPathComponent)
+
+        guard sourceURL != destinationURL else { return true }
+
+        do {
+            if fileManager.fileExists(atPath: destinationURL.path) {
+                return false
+            }
+            try fileManager.moveItem(at: sourceURL, to: destinationURL)
+        } catch {
+            return false
+        }
+
+        // 同じ videoId を持つ identity を削除し、新しいパスで同じ UUID を登録
+        videoIdentities = videoIdentities.filter { $0.value != video.id }
+        videoIdentities[identityKey(for: destinationURL)] = video.id
+        saveVideoIdentities()
+        return true
+    }
+
+    /// 指定フォルダの直下に子フォルダを新規作成する。
+    /// - Returns: 成功時は (true, nil)、失敗時は (false, エラー文言)
+    func createSubfolder(name: String, under parentURL: URL) -> (success: Bool, errorMessage: String?) {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !trimmed.contains("/"), trimmed != ".", trimmed != ".." else {
+            return (false, "フォルダ名が不正です。")
+        }
+        let newDir = parentURL.appendingPathComponent(trimmed)
+        guard !fileManager.fileExists(atPath: newDir.path) else {
+            return (false, "「\(trimmed)」は既に存在します。")
+        }
+        do {
+            try fileManager.createDirectory(at: newDir, withIntermediateDirectories: false)
+            return (true, nil)
+        } catch {
+            return (false, error.localizedDescription)
+        }
+    }
+
     /// 指定フォルダの直下のサブディレクトリ一覧（1階層のみ）
     func subdirectories(of url: URL) -> [URL] {
         guard let items = try? fileManager.contentsOfDirectory(

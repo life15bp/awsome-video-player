@@ -1,10 +1,18 @@
 import SwiftUI
 import AppKit
+import UniformTypeIdentifiers
+
+/// 動画 ID をドラッグ時にプレーンテキストで渡すためのプレフィックス（他アプリのテキスト D&D と区別）
+private let videoIdDragPrefix = "avp-video-id:"
 
 struct LibraryView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
 
     let onAddFolder: (URL) -> Void
+
+    /// Finder 風の開閉状態（展開しているフォルダの id 一覧）
+    @State private var expandedFolderIds: Set<String> = []
+    @State private var dropTargetFolderId: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -43,6 +51,11 @@ struct LibraryView: View {
                         }
                     }
                 }
+                .onAppear {
+                    if expandedFolderIds.isEmpty, !libraryViewModel.folderTree.isEmpty {
+                        expandedFolderIds = Set(libraryViewModel.folderTree.map(\.id))
+                    }
+                }
             }
         }
         .frame(minWidth: 200)
@@ -50,9 +63,31 @@ struct LibraryView: View {
 
     private func folderRow(node: FolderNode, indent: CGFloat) -> AnyView {
         let isSelected = node.url == libraryViewModel.selectedFolder
+        let hasChildren = !node.children.isEmpty
+        let isExpanded = expandedFolderIds.contains(node.id)
+        let isDropTarget = dropTargetFolderId == node.id
 
         let content = VStack(alignment: .leading, spacing: 2) {
-            HStack {
+            HStack(spacing: 4) {
+                if hasChildren {
+                    Button {
+                        if isExpanded {
+                            expandedFolderIds.remove(node.id)
+                        } else {
+                            expandedFolderIds.insert(node.id)
+                        }
+                    } label: {
+                        Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .frame(width: 14, alignment: .center)
+                    }
+                    .buttonStyle(.plain)
+                } else {
+                    Spacer()
+                        .frame(width: 14)
+                }
+
                 Text(node.name)
                     .lineLimit(1)
                     .font(.callout)
@@ -62,27 +97,53 @@ struct LibraryView: View {
             .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(isSelected ? Color.accentColor.opacity(0.2) : Color.clear)
+                    .fill(isSelected ? Color.accentColor.opacity(0.2) : (isDropTarget ? Color.accentColor.opacity(0.15) : Color.clear))
             )
             .contentShape(Rectangle())
             .padding(.leading, indent)
             .onTapGesture {
                 libraryViewModel.selectedFolder = node.url
             }
+            .onDrop(of: [.utf8PlainText], isTargeted: Binding(
+                get: { isDropTarget },
+                set: { dropTargetFolderId = $0 ? node.id : nil }
+            )) { providers in
+                acceptVideoDrop(providers: providers, destinationFolder: node.url)
+            }
             .contextMenu {
+                Button("子フォルダを作成…") {
+                    showNewFolderAlert(parentURL: node.url)
+                }
                 if libraryViewModel.isRootFolder(node.url) {
+                    Divider()
                     Button("ライブラリから削除", role: .destructive) {
                         libraryViewModel.removeFolder(node.url)
                     }
                 }
             }
 
-            ForEach(node.children) { child in
-                folderRow(node: child, indent: indent + 12)
+            if hasChildren, isExpanded {
+                ForEach(node.children) { child in
+                    folderRow(node: child, indent: indent + 12)
+                }
             }
         }
 
         return AnyView(content)
+    }
+
+    private func acceptVideoDrop(providers: [NSItemProvider], destinationFolder: URL) -> Bool {
+        guard let provider = providers.first else { return false }
+        _ = provider.loadObject(ofClass: String.self) { obj, _ in
+            guard let s = obj, s.hasPrefix(videoIdDragPrefix),
+                  let id = UUID(uuidString: String(s.dropFirst(videoIdDragPrefix.count))) else { return }
+            DispatchQueue.main.async {
+                guard let video = libraryViewModel.video(byId: id) else { return }
+                _ = libraryViewModel.moveVideo(video, to: destinationFolder)
+                dropTargetFolderId = nil
+            }
+        }
+        return true
     }
 
     private func openFolderPicker() {
@@ -96,6 +157,34 @@ struct LibraryView: View {
             // 次回起動後も同じフォルダにアクセスできるよう、スコープを取得してから追加する
             _ = url.startAccessingSecurityScopedResource()
             onAddFolder(url)
+        }
+    }
+
+    /// 子フォルダ作成を AppKit の NSAlert で表示（macOS で確実にボタンが反応する）
+    private func showNewFolderAlert(parentURL: URL) {
+        let alert = NSAlert()
+        alert.messageText = "子フォルダを作成"
+        alert.informativeText = "フォルダ名を入力してください。"
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 22))
+        textField.placeholderString = "フォルダ名"
+        alert.accessoryView = textField
+        alert.addButton(withTitle: "作成")
+        alert.addButton(withTitle: "キャンセル")
+        alert.window.initialFirstResponder = textField
+
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            let name = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !name.isEmpty {
+                let result = libraryViewModel.createSubfolder(name: name, under: parentURL)
+                if !result.success {
+                    let errAlert = NSAlert()
+                    errAlert.messageText = "子フォルダを作成できませんでした"
+                    errAlert.informativeText = result.errorMessage ?? "書き込み権限を確認してください。"
+                    errAlert.alertStyle = .warning
+                    errAlert.runModal()
+                }
+            }
         }
     }
 }

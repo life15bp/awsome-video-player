@@ -47,6 +47,29 @@ final class LibraryViewModel: ObservableObject {
         refreshAllVideos()
     }
 
+    /// ID で動画を取得（D&D のドロップ時に使用）
+    func video(byId id: UUID) -> VideoFile? {
+        videos.first { $0.id == id }
+    }
+
+    /// 動画を指定フォルダへ移動。お気に入り・タグは identity で保持される。
+    /// - Returns: 成功したら true
+    func moveVideo(_ video: VideoFile, to folderURL: URL) -> Bool {
+        guard libraryService.moveVideo(video, toDestinationFolder: folderURL) else { return false }
+        refreshAllVideos()
+        return true
+    }
+
+    /// 指定フォルダの直下に子フォルダを新規作成する。作成後にツリーを再構築する。
+    /// - Returns: 成功時は (true, nil)、失敗時は (false, 表示用エラー文言)
+    func createSubfolder(name: String, under parentURL: URL) -> (success: Bool, errorMessage: String?) {
+        let result = libraryService.createSubfolder(name: name, under: parentURL)
+        if result.success {
+            refreshAllVideos()
+        }
+        return result
+    }
+
     func refreshAllVideos() {
         videos = folders.flatMap { libraryService.scanVideosRecursively(in: $0) }
         _thumbnailsByKey = [:]
