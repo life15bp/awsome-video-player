@@ -167,6 +167,42 @@ final class PlayerViewModel: ObservableObject {
         playbackService.seek(to: newSeconds)
     }
 
+    /// 1コマ戻る（一時停止してからシーク）
+    func stepBackwardFrame() {
+        let duration = durationSeconds
+        guard duration > 0 else { return }
+        pause()
+        let step = playbackService.frameDurationInSeconds
+        let newSeconds = max(currentSeconds - step, 0)
+        playbackService.seek(to: newSeconds)
+    }
+
+    /// 1コマ進む（一時停止してからシーク）
+    func stepForwardFrame() {
+        let duration = durationSeconds
+        guard duration > 0 else { return }
+        pause()
+        let step = playbackService.frameDurationInSeconds
+        let newSeconds = min(currentSeconds + step, duration)
+        playbackService.seek(to: newSeconds)
+    }
+
+    /// 5秒戻る
+    func stepBackward5Sec() {
+        let duration = durationSeconds
+        guard duration > 0 else { return }
+        let newSeconds = max(currentSeconds - 5, 0)
+        playbackService.seek(to: newSeconds)
+    }
+
+    /// 5秒進む
+    func stepForward5Sec() {
+        let duration = durationSeconds
+        guard duration > 0 else { return }
+        let newSeconds = min(currentSeconds + 5, duration)
+        playbackService.seek(to: newSeconds)
+    }
+
     // MARK: - Favorites
 
     func addFavoriteAtCurrentTime() {

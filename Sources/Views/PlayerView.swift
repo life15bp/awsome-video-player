@@ -86,14 +86,27 @@ private struct SpaceKeyMonitorView: View {
         monitor = NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask(arrayLiteral: .keyDown, .keyUp)) { [weak playerViewModel] event in
             guard let vm = playerViewModel else { return event }
             guard NSApp.keyWindow?.title.contains("Player") == true else { return event }
-            guard event.keyCode == 49 else { return event }
-            if event.type == .keyDown {
-                vm.onSpaceKeyDown()
-                return nil
+            if event.keyCode == 49 {
+                if event.type == .keyDown {
+                    vm.onSpaceKeyDown()
+                    return nil
+                }
+                if event.type == .keyUp {
+                    vm.onSpaceKeyUp()
+                    return nil
+                }
+                return event
             }
-            if event.type == .keyUp {
-                vm.onSpaceKeyUp()
-                return nil
+            if event.type == .keyDown {
+                let shift = event.modifierFlags.contains(.shift)
+                if event.keyCode == 123 {
+                    if shift { vm.stepBackward5Sec() } else { vm.stepBackwardFrame() }
+                    return nil
+                }
+                if event.keyCode == 124 {
+                    if shift { vm.stepForward5Sec() } else { vm.stepForwardFrame() }
+                    return nil
+                }
             }
             return event
         }

@@ -6,6 +6,8 @@ final class PlaybackService: ObservableObject {
     @Published private(set) var currentFile: VideoFile?
     @Published private(set) var currentTime: CMTime = .zero
     @Published private(set) var duration: CMTime = .zero
+    /// 1コマの長さ（秒）。アセットの動画トラックから取得、取得できない場合は 1/30 秒
+    @Published private(set) var frameDurationInSeconds: Double = 1.0 / 30.0
 
     private var timeObserverToken: Any?
 
@@ -28,12 +30,18 @@ final class PlaybackService: ObservableObject {
         duration = .zero
 
         if let item = player.currentItem {
+            frameDurationInSeconds = 1.0 / 30.0
             Task { @MainActor in
                 do {
                     let d = try await item.asset.load(.duration)
                     self.duration = d
                 } catch {
                     self.duration = .zero
+                }
+                if let tracks = try? await item.asset.load(.tracks),
+                   let video = tracks.first(where: { $0.mediaType == .video }),
+                   let rate = try? await video.load(.nominalFrameRate), rate > 0 {
+                    self.frameDurationInSeconds = 1.0 / Double(rate)
                 }
             }
         }
