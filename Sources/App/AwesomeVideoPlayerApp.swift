@@ -18,7 +18,7 @@ struct AwesomeVideoPlayerApp: App {
                 .environmentObject(playerViewModel)
         }
 
-        WindowGroup("Player", id: "playerWindow") {
+        Window("Player", id: "playerWindow") {
             PlayerView()
                 .environmentObject(libraryViewModel)
                 .environmentObject(playerViewModel)
