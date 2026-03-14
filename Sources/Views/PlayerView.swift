@@ -69,6 +69,44 @@ private struct FullScreenWindowEnabler: NSViewRepresentable {
     }
 }
 
+/// スペースキーのホールドで 2倍速、離すと元の速度。短押しで再生/一時停止。
+private struct SpaceKeyMonitorView: View {
+    @ObservedObject var playerViewModel: PlayerViewModel
+    @State private var monitor: Any?
+
+    var body: some View {
+        Color.clear
+            .frame(width: 0, height: 0)
+            .onAppear { installMonitor() }
+            .onDisappear { removeMonitor() }
+    }
+
+    private func installMonitor() {
+        guard monitor == nil else { return }
+        monitor = NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask(arrayLiteral: .keyDown, .keyUp)) { [weak playerViewModel] event in
+            guard let vm = playerViewModel else { return event }
+            guard NSApp.keyWindow?.title.contains("Player") == true else { return event }
+            guard event.keyCode == 49 else { return event }
+            if event.type == .keyDown {
+                vm.onSpaceKeyDown()
+                return nil
+            }
+            if event.type == .keyUp {
+                vm.onSpaceKeyUp()
+                return nil
+            }
+            return event
+        }
+    }
+
+    private func removeMonitor() {
+        if let m = monitor {
+            NSEvent.removeMonitor(m)
+            monitor = nil
+        }
+    }
+}
+
 /// ウィンドウのフルスクリーン入退を検知して Binding を更新する
 private struct FullScreenObserver: NSViewRepresentable {
     @Binding var isFullScreen: Bool
@@ -185,6 +223,7 @@ struct PlayerView: View {
         .padding(0)
         .background(FullScreenWindowEnabler())
         .background(FullScreenObserver(isFullScreen: $isFullScreen))
+        .background(SpaceKeyMonitorView(playerViewModel: playerViewModel))
     }
 
     /// プレイヤーウィンドウをネイティブフルスクリーン（メニュー・Dock 非表示）で切り替え

@@ -52,6 +52,14 @@ final class PlaybackService: ObservableObject {
         player?.pause()
     }
 
+    var currentRate: Float {
+        player?.rate ?? 1.0
+    }
+
+    func setRate(_ rate: Float) {
+        player?.rate = rate
+    }
+
     func seek(to seconds: Double) {
         let target = CMTime(seconds: seconds, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         player?.seek(to: target, toleranceBefore: .zero, toleranceAfter: .zero)

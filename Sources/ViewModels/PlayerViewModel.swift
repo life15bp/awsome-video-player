@@ -87,6 +87,46 @@ final class PlayerViewModel: ObservableObject {
         }
     }
 
+    /// スペースホールド用: 2倍速に切り替え（離したときに exitSpeedHold で元に戻す）
+    func enterSpeedHold() {
+        savedPlaybackRateForHold = playbackService.currentRate
+        playbackService.setRate(2.0)
+        isSpeedHoldActive = true
+    }
+
+    /// スペースホールド終了: 元の再生速度に戻す
+    func exitSpeedHold() {
+        playbackService.setRate(savedPlaybackRateForHold)
+        isSpeedHoldActive = false
+    }
+
+    private(set) var isSpeedHoldActive = false
+    private var savedPlaybackRateForHold: Float = 1.0
+    private var spaceHoldWorkItem: DispatchWorkItem?
+
+    /// スペース keyDown 時に View から呼ぶ（短押しなら後で keyUp でトグル、長押しなら 0.2s で 2倍速）
+    func onSpaceKeyDown() {
+        spaceHoldWorkItem?.cancel()
+        let item = DispatchWorkItem { [weak self] in
+            self?.enterSpeedHold()
+        }
+        spaceHoldWorkItem = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            item.perform()
+        }
+    }
+
+    /// スペース keyUp 時に View から呼ぶ（ホールド中なら元の速度に、短押しなら再生/一時停止トグル）
+    func onSpaceKeyUp() {
+        spaceHoldWorkItem?.cancel()
+        spaceHoldWorkItem = nil
+        if isSpeedHoldActive {
+            exitSpeedHold()
+        } else {
+            togglePlayPause()
+        }
+    }
+
     /// お気に入りサムネイルから再生: 別動画の場合はロードしてからその時間へシークして再生
     func playSnapshot(_ snapshot: FavoriteSnapshot, video: VideoFile) {
         if currentFile?.id != video.id {
