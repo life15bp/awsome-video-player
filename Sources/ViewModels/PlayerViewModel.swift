@@ -8,6 +8,8 @@ final class PlayerViewModel: ObservableObject {
     @Published private(set) var viewport = ViewportState()
     @Published private(set) var favorites: [FavoriteSnapshot] = []
     @Published private(set) var isPlaying = false
+    /// タグタブでの表示順（永続化済み）。未登録タグは末尾に辞書順で追加される。
+    @Published private(set) var tagOrder: [String] = []
 
     private let playbackService: PlaybackService
     private let favoriteService: FavoriteService
@@ -17,6 +19,7 @@ final class PlayerViewModel: ObservableObject {
         self.playbackService = playbackService
         self.favoriteService = favoriteService
         self.favorites = favoriteService.loadFavorites()
+        self.tagOrder = favoriteService.loadTagOrder()
 
         playbackService.$currentTime
             .receive(on: DispatchQueue.main)
@@ -181,10 +184,33 @@ final class PlayerViewModel: ObservableObject {
         Set(favorites.filter { $0.tags.contains(tag) }.map(\.videoId))
     }
 
-    /// 全お気に入りで使われているタグ一覧（重複排除・ソート）
+    /// 全お気に入りで使われているタグ一覧（重複排除・辞書順）
     var allTags: [String] {
         let tags = favorites.flatMap(\.tags)
         return Array(Set(tags)).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+    }
+
+    /// タグタブ用の表示順。tagOrder をベースに、未登録タグは末尾に辞書順で追加。
+    var orderedTagsForFilter: [String] {
+        let used = allTags
+        let ordered = tagOrder.filter { used.contains($0) }
+        let rest = used.filter { !tagOrder.contains($0) }.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        return ordered + rest
+    }
+
+    /// タグの表示順を D&D で変更（orderedTagsForFilter 上のインデックス）
+    func reorderTags(from sourceIndex: Int, to destinationIndex: Int) {
+        var order = orderedTagsForFilter
+        guard sourceIndex != destinationIndex,
+              sourceIndex >= 0, sourceIndex < order.count,
+              destinationIndex >= 0, destinationIndex <= order.count
+        else { return }
+        let item = order.remove(at: sourceIndex)
+        let insertIndex = min(destinationIndex, order.count)
+        order.insert(item, at: insertIndex)
+        tagOrder = order
+        favoriteService.saveTagOrder(tagOrder)
+        objectWillChange.send()
     }
 
     // MARK: - お気に入り中のお気に入り（メインサムネイル）

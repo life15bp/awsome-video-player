@@ -6,6 +6,8 @@ import UniformTypeIdentifiers
 private let videoIdDragPrefix = "avp-video-id:"
 /// フォルダ並べ替え用ドラッグのプレフィックス（ルートフォルダの index）
 private let folderOrderDragPrefix = "avp-folder-order:"
+/// タグ並べ替え用ドラッグのプレフィックス（タグ名を渡す）
+private let tagOrderDragPrefix = "avp-tag:"
 
 /// ルートフォルダのときだけドラッグで並べ替え用データを渡す
 private struct RootFolderDragModifier: ViewModifier {
@@ -32,6 +34,8 @@ struct LibraryView: View {
     /// Finder 風の開閉状態（展開しているフォルダの id 一覧）
     @State private var expandedFolderIds: Set<String> = []
     @State private var dropTargetFolderId: String?
+    /// タグタブで D&D のドロップ先としてハイライトする行のインデックス（orderedTagsForFilter 上）
+    @State private var dropTargetTagIndex: Int? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -57,7 +61,7 @@ struct LibraryView: View {
         .padding(.bottom, 4)
     }
 
-    /// タグタブ: 「お気に入り」＋タグ一覧でフィルタ選択
+    /// タグタブ: 「お気に入り」＋タグ一覧でフィルタ選択（タグは D&D で並べ替え可能）
     private var tagFilterView: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("フィルタ")
@@ -69,9 +73,22 @@ struct LibraryView: View {
                     tagFilterRow(label: "お気に入り", isSelected: libraryViewModel.selectedTagForFilter == nil) {
                         libraryViewModel.selectedTagForFilter = nil
                     }
-                    ForEach(playerViewModel.allTags, id: \.self) { tag in
-                        tagFilterRow(label: tag, isSelected: libraryViewModel.selectedTagForFilter == tag) {
+                    ForEach(Array(playerViewModel.orderedTagsForFilter.enumerated()), id: \.element) { index, tag in
+                        tagFilterRow(
+                            label: tag,
+                            isSelected: libraryViewModel.selectedTagForFilter == tag,
+                            isDropTarget: dropTargetTagIndex == index
+                        ) {
                             libraryViewModel.selectedTagForFilter = tag
+                        }
+                        .onDrag {
+                            NSItemProvider(object: (tagOrderDragPrefix + tag) as NSString)
+                        }
+                        .onDrop(of: [.utf8PlainText], isTargeted: Binding(
+                            get: { dropTargetTagIndex == index },
+                            set: { dropTargetTagIndex = $0 ? index : nil }
+                        )) { providers in
+                            acceptTagDrop(providers: providers, destinationIndex: index)
                         }
                     }
                 }
@@ -80,7 +97,25 @@ struct LibraryView: View {
         .frame(minWidth: 200)
     }
 
-    private func tagFilterRow(label: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+    private func acceptTagDrop(providers: [NSItemProvider], destinationIndex: Int) -> Bool {
+        guard let provider = providers.first else { return false }
+        _ = provider.loadObject(ofClass: String.self) { obj, _ in
+            guard let s = obj as? String, s.hasPrefix(tagOrderDragPrefix) else { return }
+            let tag = String(s.dropFirst(tagOrderDragPrefix.count))
+            DispatchQueue.main.async {
+                let order = playerViewModel.orderedTagsForFilter
+                guard let sourceIndex = order.firstIndex(of: tag), sourceIndex != destinationIndex else {
+                    dropTargetTagIndex = nil
+                    return
+                }
+                playerViewModel.reorderTags(from: sourceIndex, to: destinationIndex)
+                dropTargetTagIndex = nil
+            }
+        }
+        return true
+    }
+
+    private func tagFilterRow(label: String, isSelected: Bool, isDropTarget: Bool = false, action: @escaping () -> Void) -> some View {
         Text(label)
             .lineLimit(1)
             .font(.callout)
@@ -89,7 +124,7 @@ struct LibraryView: View {
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(isSelected ? Color.accentColor.opacity(0.2) : Color.clear)
+                    .fill(isSelected ? Color.accentColor.opacity(0.2) : (isDropTarget ? Color.accentColor.opacity(0.15) : Color.clear))
             )
             .contentShape(Rectangle())
             .onTapGesture(perform: action)

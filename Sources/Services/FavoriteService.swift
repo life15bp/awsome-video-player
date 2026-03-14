@@ -49,5 +49,27 @@ final class FavoriteService {
             // 永続化失敗時もアプリは動き続ける
         }
     }
+
+    // MARK: - タグ表示順（左ペイン・タグタブ用）
+
+    private var tagOrderFileURL: URL? {
+        guard let dir = favoritesFileURL?.deletingLastPathComponent() else { return nil }
+        return dir.appendingPathComponent("tag-order.json")
+    }
+
+    func loadTagOrder() -> [String] {
+        guard let url = tagOrderFileURL,
+              let data = try? Data(contentsOf: url),
+              let order = try? JSONDecoder().decode([String].self, from: data)
+        else { return [] }
+        return order
+    }
+
+    func saveTagOrder(_ order: [String]) {
+        guard let url = tagOrderFileURL,
+              let data = try? JSONEncoder().encode(order)
+        else { return }
+        try? data.write(to: url, options: [.atomic])
+    }
 }
 
