@@ -11,6 +11,7 @@ struct VideoListDetailView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @Environment(\.openWindow) private var openWindow
+    @State private var moveSheetVideo: VideoFile?
 
     private let mainThumbSize = CGSize(width: 200, height: 112)
     private let favThumbSize = CGSize(width: 160, height: 90)
@@ -52,6 +53,13 @@ struct VideoListDetailView: View {
             DispatchQueue.main.async {
                 playerViewModel.reloadFavoritesFromDisk()
             }
+        }
+        .sheet(item: $moveSheetVideo) { video in
+            MoveDestinationSheet(
+                video: video,
+                libraryViewModel: libraryViewModel,
+                onDismiss: { moveSheetVideo = nil }
+            )
         }
     }
 
@@ -143,6 +151,9 @@ struct VideoListDetailView: View {
         .contextMenu {
             Button("Reveal in Finder") {
                 NSWorkspace.shared.activateFileViewerSelecting([video.url])
+            }
+            Button("移動…") {
+                moveSheetVideo = video
             }
             Button("動画にタグを追加…") {
                 showAddVideoTagAlert(video: video)
@@ -258,5 +269,96 @@ struct VideoListDetailView: View {
             .font(.subheadline)
             .foregroundColor(.secondary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+// MARK: - 移動先フォルダ選択シート
+
+private struct MoveDestinationSheet: View {
+    let video: VideoFile
+    @ObservedObject var libraryViewModel: LibraryViewModel
+    let onDismiss: () -> Void
+
+    private var currentFolderPath: String {
+        normPath(video.url.deletingLastPathComponent())
+    }
+
+    private func normPath(_ url: URL) -> String {
+        let p = url.standardizedFileURL.path
+        return p.hasSuffix("/") && p.count > 1 ? String(p.dropLast()) : p
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text("移動先のフォルダを選択")
+                    .font(.headline)
+                Spacer()
+                Button("キャンセル") {
+                    onDismiss()
+                }
+            }
+            .padding()
+            Divider()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(flattenedFolderItems) { item in
+                        folderRow(node: item.node, indent: item.indent)
+                    }
+                }
+                .padding(8)
+            }
+        }
+        .frame(minWidth: 320, minHeight: 320)
+    }
+
+    private struct FolderItem: Identifiable {
+        let id: String
+        let node: FolderNode
+        let indent: CGFloat
+    }
+
+    private var flattenedFolderItems: [FolderItem] {
+        func flatten(nodes: [FolderNode], depth: CGFloat) -> [FolderItem] {
+            nodes.flatMap { node in
+                [FolderItem(id: node.id, node: node, indent: depth)]
+                    + flatten(nodes: node.children, depth: depth + 16)
+            }
+        }
+        return flatten(nodes: libraryViewModel.folderTree, depth: 0)
+    }
+
+    private func folderRow(node: FolderNode, indent: CGFloat) -> some View {
+        let isCurrentFolder = normPath(node.url) == currentFolderPath
+        let hasChildren = !node.children.isEmpty
+
+        return Button {
+            if !isCurrentFolder {
+                _ = libraryViewModel.moveVideo(video, to: node.url)
+                onDismiss()
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: hasChildren ? "folder.fill" : "folder")
+                    .foregroundColor(.secondary)
+                Text(node.name)
+                    .lineLimit(1)
+                if isCurrentFolder {
+                    Text("(現在)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(isCurrentFolder ? Color.secondary.opacity(0.1) : Color.clear)
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(isCurrentFolder)
+        .padding(.leading, indent)
     }
 }
