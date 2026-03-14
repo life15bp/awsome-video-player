@@ -2,6 +2,43 @@ import SwiftUI
 import AVKit
 import AppKit
 
+/// 動画を画面いっぱいに表示（resizeAspectFill）。フルスクリーン時の左右余白解消用。
+private struct AVPlayerFillView: NSViewRepresentable {
+    let player: AVPlayer
+
+    func makeNSView(context: Context) -> NSView {
+        let view = PlayerLayerHostView()
+        view.wantsLayer = true
+        let layer = AVPlayerLayer(player: player)
+        layer.videoGravity = .resizeAspectFill
+        view.playerLayer = layer
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        guard let host = nsView as? PlayerLayerHostView else { return }
+        host.playerLayer?.player = player
+        host.needsLayout = true
+    }
+
+    private class PlayerLayerHostView: NSView {
+        var playerLayer: AVPlayerLayer? {
+            didSet {
+                oldValue?.removeFromSuperlayer()
+                guard let pl = playerLayer else { return }
+                layer?.addSublayer(pl)
+            }
+        }
+        override func layout() {
+            super.layout()
+            if let pl = playerLayer {
+                if pl.superlayer != layer { layer?.addSublayer(pl) }
+                pl.frame = bounds
+            }
+        }
+    }
+}
+
 /// プレイヤーウィンドウで緑ボタンがネイティブフルスクリーン（メニュー非表示）になるよう collectionBehavior を設定する
 private struct FullScreenWindowEnabler: NSViewRepresentable {
     func makeNSView(context: Context) -> NSView {
@@ -32,34 +69,87 @@ private struct FullScreenWindowEnabler: NSViewRepresentable {
     }
 }
 
+/// ウィンドウのフルスクリーン入退を検知して Binding を更新する
+private struct FullScreenObserver: NSViewRepresentable {
+    @Binding var isFullScreen: Bool
+
+    func makeNSView(context: Context) -> NSView {
+        let v = NSView(frame: .zero)
+        return v
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        guard context.coordinator.observers.isEmpty else { return }
+        guard let window = nsView.window else { return }
+        let token1 = NotificationCenter.default.addObserver(
+            forName: NSWindow.didEnterFullScreenNotification,
+            object: window,
+            queue: .main
+        ) { [weak nsView] _ in
+            guard nsView?.window != nil else { return }
+            DispatchQueue.main.async { isFullScreen = true }
+        }
+        let token2 = NotificationCenter.default.addObserver(
+            forName: NSWindow.willExitFullScreenNotification,
+            object: window,
+            queue: .main
+        ) { [weak nsView] _ in
+            guard nsView?.window != nil else { return }
+            DispatchQueue.main.async { isFullScreen = false }
+        }
+        context.coordinator.observers = [token1, token2]
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    class Coordinator {
+        var observers: [NSObjectProtocol] = []
+        deinit {
+            observers.forEach { NotificationCenter.default.removeObserver($0) }
+        }
+    }
+}
+
 struct PlayerView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @State private var lastDragOffset: CGSize = .zero
+    @State private var isFullScreen = false
 
     var body: some View {
         VStack(spacing: 0) {
             if let player = playerViewModel.player {
                 ZStack {
                     ZStack(alignment: .bottomTrailing) {
-                        ScrollCaptureView(onScroll: { deltaX, deltaY, modifierFlags in
-                            let commandPressed = modifierFlags.contains(.command)
-                            if commandPressed, abs(deltaY) >= abs(deltaX) {
-                                playerViewModel.zoom(byScrollDelta: deltaY)
-                            } else if abs(deltaX) > abs(deltaY) {
-                                playerViewModel.scrub(byHorizontalDelta: deltaX)
+                        Group {
+                            if isFullScreen {
+                                AVPlayerFillView(player: player)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { playerViewModel.togglePlayPause() }
+                            } else {
+                                ScrollCaptureView(onScroll: { deltaX, deltaY, modifierFlags in
+                                    let commandPressed = modifierFlags.contains(.command)
+                                    if commandPressed, abs(deltaY) >= abs(deltaX) {
+                                        playerViewModel.zoom(byScrollDelta: deltaY)
+                                    } else if abs(deltaX) > abs(deltaY) {
+                                        playerViewModel.scrub(byHorizontalDelta: deltaX)
+                                    }
+                                }) {
+                                    videoContent(player: player)
+                                }
+                                .aspectRatio(16 / 9, contentMode: .fit)
                             }
-                        }) {
-                            videoContent(player: player)
                         }
-                        .aspectRatio(16 / 9, contentMode: .fit)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
 
                         if playerViewModel.viewport.scale > 1.01 {
                             MiniMapView(
                                 scale: playerViewModel.viewport.scale,
                                 offset: playerViewModel.viewport.offset
                             )
-                            .padding(12)
+                            .padding(8)
                         }
                     }
 
@@ -83,7 +173,7 @@ struct PlayerView: View {
                         }
                         Spacer()
                     }
-                    .padding()
+                    .padding(0)
                 }
 
                 playbackBar
@@ -92,8 +182,9 @@ struct PlayerView: View {
                     .foregroundColor(.secondary)
             }
         }
-        .padding()
+        .padding(0)
         .background(FullScreenWindowEnabler())
+        .background(FullScreenObserver(isFullScreen: $isFullScreen))
     }
 
     /// プレイヤーウィンドウをネイティブフルスクリーン（メニュー・Dock 非表示）で切り替え
@@ -128,8 +219,8 @@ struct PlayerView: View {
                 .foregroundColor(.secondary)
                 .frame(width: 44, alignment: .leading)
         }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
+        .padding(.horizontal, 0)
     }
 
     @ViewBuilder
