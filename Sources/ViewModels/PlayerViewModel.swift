@@ -183,12 +183,19 @@ final class PlayerViewModel: ObservableObject {
         primaryThumbnailSnapshot(for: video)?.timeSeconds
     }
 
-    /// 指定したお気に入りを「動画のメインサムネイル」に設定する（お気に入り中のお気に入り）
+    /// 指定したお気に入りを「動画のメインサムネイル」に設定する（お気に入り中のお気に入り）。同一動画内でのみ切り替え、他動画には影響しない。
     func setAsMainThumbnail(_ snapshot: FavoriteSnapshot) {
-        for i in favorites.indices {
-            favorites[i].useAsVideoThumbnail = (favorites[i].id == snapshot.id && favorites[i].videoId == snapshot.videoId)
+        let videoId = snapshot.videoId
+        for i in favorites.indices where favorites[i].videoId == videoId {
+            favorites[i].useAsVideoThumbnail = (favorites[i].id == snapshot.id)
         }
         favoriteService.saveFavorites(favorites)
+        objectWillChange.send()
+    }
+
+    /// 永続化済みのお気に入りをディスクから再読み込み（フォルダ切り替え後など表示の整合性用）
+    func reloadFavoritesFromDisk() {
+        favorites = favoriteService.loadFavorites()
         objectWillChange.send()
     }
 }

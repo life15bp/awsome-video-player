@@ -4,6 +4,24 @@ import UniformTypeIdentifiers
 
 /// 動画 ID をドラッグ時にプレーンテキストで渡すためのプレフィックス（他アプリのテキスト D&D と区別）
 private let videoIdDragPrefix = "avp-video-id:"
+/// フォルダ並べ替え用ドラッグのプレフィックス（ルートフォルダの index）
+private let folderOrderDragPrefix = "avp-folder-order:"
+
+/// ルートフォルダのときだけドラッグで並べ替え用データを渡す
+private struct RootFolderDragModifier: ViewModifier {
+    let isRoot: Bool
+    let rootIndex: Int?
+
+    func body(content: Content) -> some View {
+        if isRoot, let idx = rootIndex {
+            content.onDrag {
+                NSItemProvider(object: (folderOrderDragPrefix + String(idx)) as NSString)
+            }
+        } else {
+            content
+        }
+    }
+}
 
 struct LibraryView: View {
     @EnvironmentObject private var libraryViewModel: LibraryViewModel
@@ -46,8 +64,8 @@ struct LibraryView: View {
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 2) {
-                        ForEach(libraryViewModel.folderTree) { node in
-                            folderRow(node: node, indent: 0)
+                        ForEach(Array(libraryViewModel.folderTree.enumerated()), id: \.element.id) { index, node in
+                            folderRow(node: node, indent: 0, rootIndex: index)
                         }
                     }
                 }
@@ -61,11 +79,12 @@ struct LibraryView: View {
         .frame(minWidth: 200)
     }
 
-    private func folderRow(node: FolderNode, indent: CGFloat) -> AnyView {
+    private func folderRow(node: FolderNode, indent: CGFloat, rootIndex: Int? = nil) -> AnyView {
         let isSelected = node.url == libraryViewModel.selectedFolder
         let hasChildren = !node.children.isEmpty
         let isExpanded = expandedFolderIds.contains(node.id)
         let isDropTarget = dropTargetFolderId == node.id
+        let isRoot = rootIndex != nil
 
         let content = VStack(alignment: .leading, spacing: 2) {
             HStack(spacing: 4) {
@@ -108,8 +127,9 @@ struct LibraryView: View {
                 get: { isDropTarget },
                 set: { dropTargetFolderId = $0 ? node.id : nil }
             )) { providers in
-                acceptVideoDrop(providers: providers, destinationFolder: node.url)
+                acceptDrop(providers: providers, folderURL: node.url, folderRootIndex: rootIndex)
             }
+            .modifier(RootFolderDragModifier(isRoot: isRoot, rootIndex: rootIndex))
             .contextMenu {
                 Button("子フォルダを作成…") {
                     showNewFolderAlert(parentURL: node.url)
@@ -124,7 +144,7 @@ struct LibraryView: View {
 
             if hasChildren, isExpanded {
                 ForEach(node.children) { child in
-                    folderRow(node: child, indent: indent + 12)
+                    folderRow(node: child, indent: indent + 12, rootIndex: nil)
                 }
             }
         }
@@ -132,14 +152,20 @@ struct LibraryView: View {
         return AnyView(content)
     }
 
-    private func acceptVideoDrop(providers: [NSItemProvider], destinationFolder: URL) -> Bool {
+    private func acceptDrop(providers: [NSItemProvider], folderURL: URL, folderRootIndex: Int?) -> Bool {
         guard let provider = providers.first else { return false }
         _ = provider.loadObject(ofClass: String.self) { obj, _ in
-            guard let s = obj, s.hasPrefix(videoIdDragPrefix),
-                  let id = UUID(uuidString: String(s.dropFirst(videoIdDragPrefix.count))) else { return }
+            guard let s = obj as? String else { return }
             DispatchQueue.main.async {
-                guard let video = libraryViewModel.video(byId: id) else { return }
-                _ = libraryViewModel.moveVideo(video, to: destinationFolder)
+                if s.hasPrefix(folderOrderDragPrefix), let destIndex = folderRootIndex {
+                    let rest = String(s.dropFirst(folderOrderDragPrefix.count))
+                    guard let sourceIndex = Int(rest) else { return }
+                    libraryViewModel.reorderFolders(from: sourceIndex, to: destIndex)
+                } else if s.hasPrefix(videoIdDragPrefix),
+                          let id = UUID(uuidString: String(s.dropFirst(videoIdDragPrefix.count))) {
+                    guard let video = libraryViewModel.video(byId: id) else { return }
+                    _ = libraryViewModel.moveVideo(video, to: folderURL)
+                }
                 dropTargetFolderId = nil
             }
         }

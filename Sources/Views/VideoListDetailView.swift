@@ -32,6 +32,11 @@ struct VideoListDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .onChange(of: libraryViewModel.selectedFolder) { _ in
+            DispatchQueue.main.async {
+                playerViewModel.reloadFavoritesFromDisk()
+            }
+        }
     }
 
     private func videoRow(video: VideoFile) -> some View {

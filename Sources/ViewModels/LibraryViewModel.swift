@@ -47,6 +47,20 @@ final class LibraryViewModel: ObservableObject {
         refreshAllVideos()
     }
 
+    /// 追加したフォルダの並び順を変更する（ルートのみ、D&D 並べ替え用）
+    func reorderFolders(from sourceIndex: Int, to destinationIndex: Int) {
+        guard sourceIndex != destinationIndex,
+              sourceIndex >= 0, sourceIndex < folders.count,
+              destinationIndex >= 0, destinationIndex <= folders.count else { return }
+        var newFolders = folders
+        let item = newFolders.remove(at: sourceIndex)
+        let insertIndex = min(destinationIndex, newFolders.count)
+        newFolders.insert(item, at: insertIndex)
+        folders = newFolders
+        libraryService.saveFolders(folders)
+        refreshAllVideos()
+    }
+
     /// ID で動画を取得（D&D のドロップ時に使用）
     func video(byId id: UUID) -> VideoFile? {
         videos.first { $0.id == id }
