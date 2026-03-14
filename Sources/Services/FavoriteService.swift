@@ -71,5 +71,32 @@ final class FavoriteService {
         else { return }
         try? data.write(to: url, options: [.atomic])
     }
+
+    // MARK: - 動画本体のタグ
+
+    private struct VideoTagEntry: Codable {
+        let videoId: UUID
+        let tags: [String]
+    }
+
+    private var videoTagsFileURL: URL? {
+        guard let dir = favoritesFileURL?.deletingLastPathComponent() else { return nil }
+        return dir.appendingPathComponent("video-tags.json")
+    }
+
+    func loadVideoTags() -> [UUID: [String]] {
+        guard let url = videoTagsFileURL,
+              let data = try? Data(contentsOf: url),
+              let entries = try? JSONDecoder().decode([VideoTagEntry].self, from: data)
+        else { return [:] }
+        return Dictionary(uniqueKeysWithValues: entries.map { ($0.videoId, $0.tags) })
+    }
+
+    func saveVideoTags(_ map: [UUID: [String]]) {
+        guard let url = videoTagsFileURL else { return }
+        let entries = map.map { VideoTagEntry(videoId: $0.key, tags: $0.value) }
+        guard let data = try? JSONEncoder().encode(entries) else { return }
+        try? data.write(to: url, options: [.atomic])
+    }
 }
 

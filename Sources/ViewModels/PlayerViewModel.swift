@@ -10,6 +10,8 @@ final class PlayerViewModel: ObservableObject {
     @Published private(set) var isPlaying = false
     /// タグタブでの表示順（永続化済み）。未登録タグは末尾に辞書順で追加される。
     @Published private(set) var tagOrder: [String] = []
+    /// 動画本体に付けたタグ（videoId → タグ一覧）
+    @Published private(set) var videoTagMap: [UUID: [String]] = [:]
 
     private let playbackService: PlaybackService
     private let favoriteService: FavoriteService
@@ -20,6 +22,7 @@ final class PlayerViewModel: ObservableObject {
         self.favoriteService = favoriteService
         self.favorites = favoriteService.loadFavorites()
         self.tagOrder = favoriteService.loadTagOrder()
+        self.videoTagMap = favoriteService.loadVideoTags()
 
         playbackService.$currentTime
             .receive(on: DispatchQueue.main)
@@ -171,7 +174,7 @@ final class PlayerViewModel: ObservableObject {
         objectWillChange.send()
     }
 
-    /// 動画に紐づくタグ一覧（重複排除＋ソート）
+    /// 動画に紐づくタグ一覧（お気に入りスナップショット上のタグのみ。重複排除＋ソート）
     func tagsForVideo(_ video: VideoFile) -> [String] {
         let all = favorites
             .filter { $0.videoId == video.id }
@@ -181,20 +184,61 @@ final class PlayerViewModel: ObservableObject {
         }
     }
 
+    /// 動画本体に付けたタグ一覧
+    func videoTags(for video: VideoFile) -> [String] {
+        (videoTagMap[video.id] ?? []).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+    }
+
+    /// 動画にタグを追加（動画本体）
+    func addVideoTag(_ tag: String, to video: VideoFile) {
+        let trimmed = tag.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        var tags = videoTagMap[video.id] ?? []
+        guard !tags.contains(trimmed) else { return }
+        tags.append(trimmed)
+        tags.sort { $0.localizedStandardCompare($1) == .orderedAscending }
+        videoTagMap[video.id] = tags
+        favoriteService.saveVideoTags(videoTagMap)
+        objectWillChange.send()
+    }
+
+    /// 動画からタグを削除（動画本体）
+    func removeVideoTag(_ tag: String, from video: VideoFile) {
+        guard var tags = videoTagMap[video.id] else { return }
+        tags.removeAll { $0 == tag }
+        if tags.isEmpty {
+            videoTagMap.removeValue(forKey: video.id)
+        } else {
+            videoTagMap[video.id] = tags
+        }
+        favoriteService.saveVideoTags(videoTagMap)
+        objectWillChange.send()
+    }
+
+    /// 指定動画の動画タグをすべて削除（動画削除時に呼ぶ）
+    func removeVideoTagsForVideo(videoId: UUID) {
+        videoTagMap.removeValue(forKey: videoId)
+        favoriteService.saveVideoTags(videoTagMap)
+        objectWillChange.send()
+    }
+
     /// お気に入りが1つ以上ある動画の videoId 一覧（タグタブ「お気に入り」フィルタ用）
     var videoIdsWithAtLeastOneFavorite: Set<UUID> {
         Set(favorites.map(\.videoId))
     }
 
-    /// 指定タグが付いたお気に入りがある動画の videoId 一覧
+    /// 指定タグが付いた動画の videoId 一覧（お気に入りタグ or 動画タグのどちらかで一致）
     func videoIdsWithTag(_ tag: String) -> Set<UUID> {
-        Set(favorites.filter { $0.tags.contains(tag) }.map(\.videoId))
+        let fromFavorites = Set(favorites.filter { $0.tags.contains(tag) }.map(\.videoId))
+        let fromVideoTags = Set(videoTagMap.filter { $0.value.contains(tag) }.map(\.key))
+        return fromFavorites.union(fromVideoTags)
     }
 
-    /// 全お気に入りで使われているタグ一覧（重複排除・辞書順）
+    /// 全タグ一覧（お気に入り＋動画本体。重複排除・辞書順）
     var allTags: [String] {
-        let tags = favorites.flatMap(\.tags)
-        return Array(Set(tags)).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        let fromFavorites = favorites.flatMap(\.tags)
+        let fromVideos = videoTagMap.flatMap(\.value)
+        return Array(Set(fromFavorites + fromVideos)).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
     }
 
     /// タグタブ用の表示順。tagOrder をベースに、未登録タグは末尾に辞書順で追加。

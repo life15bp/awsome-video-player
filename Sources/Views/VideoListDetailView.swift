@@ -116,13 +116,14 @@ struct VideoListDetailView: View {
                 }
             }
 
-            let tags = playerViewModel.tagsForVideo(video)
-            if !tags.isEmpty {
+            videoTagsSection(video: video)
+            let favoriteTags = playerViewModel.tagsForVideo(video)
+            if !favoriteTags.isEmpty {
                 HStack(spacing: 4) {
-                    Text("タグ:")
+                    Text("お気に入りタグ:")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    ForEach(tags, id: \.self) { tag in
+                    ForEach(favoriteTags, id: \.self) { tag in
                         Text(tag)
                             .font(.caption2)
                             .padding(.horizontal, 4)
@@ -143,8 +144,65 @@ struct VideoListDetailView: View {
             Button("Reveal in Finder") {
                 NSWorkspace.shared.activateFileViewerSelecting([video.url])
             }
+            Button("動画にタグを追加…") {
+                showAddVideoTagAlert(video: video)
+            }
             Button("削除", role: .destructive) {
                 confirmAndDeleteVideo(video)
+            }
+        }
+    }
+
+    private func videoTagsSection(video: VideoFile) -> some View {
+        let tags = playerViewModel.videoTags(for: video)
+        return HStack(spacing: 4) {
+            Text("動画タグ:")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            ForEach(tags, id: \.self) { tag in
+                HStack(spacing: 2) {
+                    Text(tag)
+                        .font(.caption2)
+                    Button {
+                        playerViewModel.removeVideoTag(tag, from: video)
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .background(Capsule().fill(Color.secondary.opacity(0.2)))
+            }
+            Button {
+                showAddVideoTagAlert(video: video)
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.caption)
+                    .foregroundColor(.accentColor)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.leading, 8)
+        .padding(.bottom, 4)
+    }
+
+    private func showAddVideoTagAlert(video: VideoFile) {
+        let alert = NSAlert()
+        alert.messageText = "動画にタグを追加"
+        alert.informativeText = "タグ名を入力してください。"
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 22))
+        textField.placeholderString = "タグ名"
+        alert.accessoryView = textField
+        alert.addButton(withTitle: "追加")
+        alert.addButton(withTitle: "キャンセル")
+        alert.window.initialFirstResponder = textField
+        if alert.runModal() == .alertFirstButtonReturn {
+            let name = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !name.isEmpty {
+                playerViewModel.addVideoTag(name, to: video)
             }
         }
     }
@@ -158,6 +216,7 @@ struct VideoListDetailView: View {
         alert.addButton(withTitle: "キャンセル")
         if alert.runModal() == .alertFirstButtonReturn {
             playerViewModel.removeFavoritesForVideo(videoId: video.id)
+            playerViewModel.removeVideoTagsForVideo(videoId: video.id)
             if libraryViewModel.deleteVideo(video) {
                 // 削除完了
             } else {
