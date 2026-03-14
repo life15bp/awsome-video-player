@@ -152,6 +152,9 @@ struct VideoListDetailView: View {
             Button("Reveal in Finder") {
                 NSWorkspace.shared.activateFileViewerSelecting([video.url])
             }
+            Button("ファイル名の変更…") {
+                showRenameVideoAlert(video: video)
+            }
             Button("移動…") {
                 moveSheetVideo = video
             }
@@ -214,6 +217,33 @@ struct VideoListDetailView: View {
             let name = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
             if !name.isEmpty {
                 playerViewModel.addVideoTag(name, to: video)
+            }
+        }
+    }
+
+    private func showRenameVideoAlert(video: VideoFile) {
+        let alert = NSAlert()
+        alert.messageText = "ファイル名の変更"
+        alert.informativeText = "新しいファイル名を入力してください。（拡張子を含めます）"
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 320, height: 22))
+        textField.stringValue = video.url.lastPathComponent
+        textField.placeholderString = "ファイル名"
+        alert.accessoryView = textField
+        alert.addButton(withTitle: "変更")
+        alert.addButton(withTitle: "キャンセル")
+        alert.window.initialFirstResponder = textField
+        if alert.runModal() == .alertFirstButtonReturn {
+            let newName = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !newName.isEmpty {
+                if libraryViewModel.renameVideo(video, to: newName) {
+                    // 変更完了
+                } else {
+                    let err = NSAlert()
+                    err.messageText = "ファイル名を変更できませんでした"
+                    err.informativeText = "同じ名前のファイルが既にあるか、権限を確認してください。"
+                    err.alertStyle = .warning
+                    err.runModal()
+                }
             }
         }
     }

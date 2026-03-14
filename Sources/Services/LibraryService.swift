@@ -260,6 +260,29 @@ final class LibraryService {
         return true
     }
 
+    /// 動画ファイルのファイル名を変更する。同一フォルダ内でリネーム。お気に入り・タグは videoId で紐づくため identity を更新すれば保持される。
+    /// - Parameter newName: 新しいファイル名（拡張子を含む）
+    /// - Returns: 成功したら true、失敗なら false
+    func renameVideo(_ video: VideoFile, to newName: String) -> Bool {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !trimmed.contains("/"), trimmed != ".", trimmed != ".." else {
+            return false
+        }
+        let folder = video.url.deletingLastPathComponent()
+        let newURL = folder.appendingPathComponent(trimmed)
+        guard newURL != video.url else { return true }
+        guard !fileManager.fileExists(atPath: newURL.path) else { return false }
+        do {
+            try fileManager.moveItem(at: video.url, to: newURL)
+        } catch {
+            return false
+        }
+        videoIdentities = videoIdentities.filter { $0.value != video.id }
+        videoIdentities[identityKey(for: newURL)] = video.id
+        saveVideoIdentities()
+        return true
+    }
+
     /// 指定フォルダの直下に子フォルダを新規作成する。
     /// - Returns: 成功時は (true, nil)、失敗時は (false, エラー文言)
     func createSubfolder(name: String, under parentURL: URL) -> (success: Bool, errorMessage: String?) {

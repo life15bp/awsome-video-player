@@ -114,6 +114,15 @@ final class LibraryViewModel: ObservableObject {
         }
     }
 
+    /// 動画ファイルのファイル名を変更する。
+    /// - Parameter newName: 新しいファイル名（拡張子を含む）
+    /// - Returns: 成功したら true
+    func renameVideo(_ video: VideoFile, to newName: String) -> Bool {
+        guard libraryService.renameVideo(video, to: newName) else { return false }
+        refreshAllVideos()
+        return true
+    }
+
     /// 指定フォルダの直下に子フォルダを新規作成する。作成後にツリーを再構築する。
     /// - Returns: 成功時は (true, nil)、失敗時は (false, 表示用エラー文言)
     func createSubfolder(name: String, under parentURL: URL) -> (success: Bool, errorMessage: String?) {
