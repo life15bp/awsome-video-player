@@ -204,6 +204,7 @@ final class LibraryService {
             return []
         }
 
+        // MP4, MOV, M4V, MKV を動画としてスキャン。MKV は AVPlayer で再生を試行し、失敗時は「デフォルトのアプリで開く」で IINA/VLC 等で再生可能
         let videoExtensions: Set<String> = ["mp4", "mov", "m4v", "mkv"]
 
         var didUpdateIdentities = false

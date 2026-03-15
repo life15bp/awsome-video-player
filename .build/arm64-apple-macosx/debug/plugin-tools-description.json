@@ -3,7 +3,20 @@
 
   ],
   "copyCommands" : {
-
+    "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKit.framework" : {
+      "inputs" : [
+        {
+          "kind" : "directory",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64/VLCKit.framework"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "directory",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKit.framework"
+        }
+      ]
+    }
   },
   "explicitTargetDependencyImportCheckingMode" : {
     "none" : {
@@ -28,11 +41,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/FavoriteSnapshot.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/FolderNode.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift"
         },
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/ViewportState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Services/FavoriteService.swift"
         },
         {
           "kind" : "file",
@@ -44,6 +69,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Services/ThumbnailService.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift"
         },
         {
@@ -52,11 +81,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/FavoriteSnapshotThumbnailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/FolderFavoritesDetailView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift"
         },
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/MiniMapView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlaybackOverlayView.swift"
         },
         {
           "kind" : "file",
@@ -72,7 +113,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/VLCPlayerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/VideoListDetailView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules/VLCKitSPM.swiftmodule"
+        },
+        {
+          "kind" : "directory",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKit.framework"
         },
         {
           "kind" : "file",
@@ -84,17 +141,26 @@
       "moduleOutputPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules/AwesomeVideoPlayer.swiftmodule",
       "objects" : [
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/AwesomeVideoPlayerApp.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteSnapshot.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FolderNode.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ViewportState.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteService.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackService.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ThumbnailService.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerViewModel.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteSnapshotThumbnailView.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FolderFavoritesDetailView.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/MiniMapView.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackOverlayView.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlayerView.swift.o",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/RootView.swift.o",
-        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ScrollCaptureView.swift.o"
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ScrollCaptureView.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VLCPlayerView.swift.o",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoListDetailView.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -110,6 +176,12 @@
         "-DSWIFT_PACKAGE",
         "-DDEBUG",
         "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-I",
+        "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64",
         "-module-cache-path",
         "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/ModuleCache",
         "-parseable-output",
@@ -117,6 +189,8 @@
         "-entry-point-function-name",
         "-Xfrontend",
         "AwesomeVideoPlayer_main",
+        "-F",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug",
         "-swift-version",
         "5",
         "-plugin-path",
@@ -159,11 +233,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteSnapshot.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FolderNode.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swift.o"
         },
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ViewportState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteService.swift.o"
         },
         {
           "kind" : "file",
@@ -175,6 +261,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ThumbnailService.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryViewModel.swift.o"
         },
         {
@@ -183,11 +273,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteSnapshotThumbnailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FolderFavoritesDetailView.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryView.swift.o"
         },
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/MiniMapView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackOverlayView.swift.o"
         },
         {
           "kind" : "file",
@@ -203,25 +305,150 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VLCPlayerView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoListDetailView.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules/AwesomeVideoPlayer.swiftmodule"
         }
       ],
       "prepareForIndexing" : false,
       "sources" : [
         "/Users/life15bp/localhost/awsome-video-player/Sources/App/AwesomeVideoPlayerApp.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/FavoriteSnapshot.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/FolderNode.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/ViewportState.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Services/FavoriteService.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Services/LibraryService.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Services/PlaybackService.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Services/ThumbnailService.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/FavoriteSnapshotThumbnailView.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/FolderFavoritesDetailView.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Views/MiniMapView.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlaybackOverlayView.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift",
         "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift",
-        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/ScrollCaptureView.swift"
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/ScrollCaptureView.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/VLCPlayerView.swift",
+        "/Users/life15bp/localhost/awsome-video-player/Sources/Views/VideoListDetailView.swift"
       ],
       "tempsPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.VLCKitSPM-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/sources",
+      "importPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/checkouts/vlckit-spm/Sources/VLCKitSPM/VLCKit.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "directory",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKit.framework"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "VLCKitSPM",
+      "moduleOutputPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules/VLCKitSPM.swiftmodule",
+      "objects" : [
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/VLCKit.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j16",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-I",
+        "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64",
+        "-module-cache-path",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-F",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/include/VLCKitSPM-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-suppress-warnings"
+      ],
+      "outputFileMapPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/VLCKit.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules/VLCKitSPM.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/life15bp/localhost/awsome-video-player/.build/checkouts/vlckit-spm/Sources/VLCKitSPM/VLCKit.swift"
+      ],
+      "tempsPath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build",
       "wholeModuleOptimization" : false
     }
   },
@@ -237,17 +464,26 @@
       "awsome_video_player",
       "-c",
       "/Users/life15bp/localhost/awsome-video-player/Sources/App/AwesomeVideoPlayerApp.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/FavoriteSnapshot.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/FolderNode.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/ViewportState.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Services/FavoriteService.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Services/LibraryService.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Services/PlaybackService.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Services/ThumbnailService.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/PlayerViewModel.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/FavoriteSnapshotThumbnailView.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/FolderFavoritesDetailView.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/MiniMapView.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlaybackOverlayView.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlayerView.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/RootView.swift",
       "/Users/life15bp/localhost/awsome-video-player/Sources/Views/ScrollCaptureView.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/VLCPlayerView.swift",
+      "/Users/life15bp/localhost/awsome-video-player/Sources/Views/VideoListDetailView.swift",
       "-I",
       "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -263,6 +499,12 @@
       "-DSWIFT_PACKAGE",
       "-DDEBUG",
       "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-I",
+      "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64",
       "-module-cache-path",
       "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/ModuleCache",
       "-parseable-output",
@@ -270,6 +512,8 @@
       "-entry-point-function-name",
       "-Xfrontend",
       "AwesomeVideoPlayer_main",
+      "-F",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug",
       "-swift-version",
       "5",
       "-plugin-path",
@@ -305,11 +549,86 @@
       "awsome_video_player",
       "-driver-use-frontend-path",
       "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "VLCKitSPM" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "VLCKitSPM",
+      "-c",
+      "/Users/life15bp/localhost/awsome-video-player/.build/checkouts/vlckit-spm/Sources/VLCKitSPM/VLCKit.swift",
+      "-I",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j16",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-I",
+      "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Users/life15bp/localhost/awsome-video-player/.build/artifacts/vlckit-spm/VLCKit-all/VLCKit-all.xcframework/macos-arm64_x86_64",
+      "-module-cache-path",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-F",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/include/VLCKitSPM-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-suppress-warnings",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
     ]
   },
   "targetDependencyMap" : {
     "AwesomeVideoPlayer" : [
-
+      "VLCKitSPM",
+      "VLCKit_all"
+    ],
+    "VLCKitSPM" : [
+      "VLCKit_all"
     ]
   },
   "testDiscoveryCommands" : {
@@ -351,11 +670,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/FavoriteSnapshot.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/FolderNode.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/VideoFile.swift"
         },
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Domain/ViewportState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Services/FavoriteService.swift"
         },
         {
           "kind" : "file",
@@ -367,6 +698,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Services/ThumbnailService.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/ViewModels/LibraryViewModel.swift"
         },
         {
@@ -375,11 +710,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/FavoriteSnapshotThumbnailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/FolderFavoritesDetailView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/LibraryView.swift"
         },
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/MiniMapView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/PlaybackOverlayView.swift"
         },
         {
           "kind" : "file",
@@ -392,6 +739,14 @@
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/ScrollCaptureView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/VLCPlayerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/Sources/Views/VideoListDetailView.swift"
         }
       ],
       "outputFilePath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/sources"
@@ -409,6 +764,26 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteSnapshot.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FavoriteSnapshotThumbnailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FolderFavoritesDetailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/FolderNode.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/LibraryService.swift.o"
         },
         {
@@ -422,6 +797,10 @@
         {
           "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/MiniMapView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/PlaybackOverlayView.swift.o"
         },
         {
           "kind" : "file",
@@ -445,14 +824,44 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ThumbnailService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VLCPlayerView.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoFile.swift.o"
         },
         {
           "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/VideoListDetailView.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.build/ViewportState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/VLCKit.swift.o"
         }
       ],
       "outputFilePath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/AwesomeVideoPlayer.product/Objects.LinkFileList"
+    },
+    "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/life15bp/localhost/awsome-video-player/.build/checkouts/vlckit-spm/Sources/VLCKitSPM/VLCKit.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/VLCKitSPM.build/sources"
     },
     "/Users/life15bp/localhost/awsome-video-player/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
       "alwaysOutOfDate" : true,

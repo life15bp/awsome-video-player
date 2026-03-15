@@ -1,6 +1,8 @@
 import Foundation
 import AVFoundation
+import AppKit
 import Combine
+import VLCKitSPM
 
 final class PlayerViewModel: ObservableObject {
     @Published private(set) var currentFile: VideoFile?
@@ -8,6 +10,11 @@ final class PlayerViewModel: ObservableObject {
     @Published private(set) var viewport = ViewportState()
     @Published private(set) var favorites: [FavoriteSnapshot] = []
     @Published private(set) var isPlaying = false
+    /// MKV 用 VLC プレイヤー。nil でないときは再生・シークは VLC に委譲
+    private(set) var vlcPlayer: VLCMediaPlayer?
+    @Published private(set) var vlcCurrentSeconds: Double = 0
+    @Published private(set) var vlcDurationSeconds: Double = 0
+    private var vlcTimeObserver: NSObjectProtocol?
     /// タグタブでの表示順（永続化済み）。未登録タグは末尾に辞書順で追加される。
     @Published private(set) var tagOrder: [String] = []
     /// 動画本体に付けたタグ（videoId → タグ一覧）
@@ -28,15 +35,68 @@ final class PlayerViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in self?.objectWillChange.send() }
             .store(in: &cancellables)
+        playbackService.$playbackError
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &cancellables)
+    }
+
+    /// VLC ビューからプレイヤーが準備できたときに呼ぶ（MKV 再生用）
+    func setVLCPlayer(_ p: VLCMediaPlayer?) {
+        if let observer = vlcTimeObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        vlcTimeObserver = nil
+        vlcPlayer?.stop()
+        vlcPlayer = p
+        vlcCurrentSeconds = 0
+        vlcDurationSeconds = 0
+        if p != nil {
+            isPlaying = true
+        }
+        if let player = p {
+            if let len = player.media?.length.value?.doubleValue, len > 0 {
+                vlcDurationSeconds = len / 1000
+            }
+            vlcTimeObserver = NotificationCenter.default.addObserver(
+                forName: NSNotification.Name("VLCMediaPlayerTimeChanged"),
+                object: player,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self else { return }
+                if let t = player.time.value?.doubleValue {
+                    self.vlcCurrentSeconds = t / 1000
+                }
+                if self.vlcDurationSeconds <= 0, let len = player.media?.length.value?.doubleValue, len > 0 {
+                    self.vlcDurationSeconds = len / 1000
+                }
+                self.objectWillChange.send()
+            }
+        }
+        objectWillChange.send()
+    }
+
+    /// 再生失敗時のメッセージ（nil ならエラーなし）。Phase1: AVPlayer 失敗時。Phase2 で MKV 別エンジンに切り替える前提。
+    var playbackError: String? {
+        playbackService.playbackError
+    }
+
+    /// 現在のファイルをデフォルトのアプリ（VLC / IINA など）で開く。再生失敗時や MKV で利用。
+    func openCurrentFileInDefaultApp() {
+        guard let file = currentFile else { return }
+        NSWorkspace.shared.open(file.url)
     }
 
     func load(file: VideoFile) {
+        setVLCPlayer(nil)
         currentFile = file
         playbackService.load(file: file)
         player = playbackService.player
         viewport = ViewportState()
         isPlaying = false
-        play()
+        if player != nil {
+            play()
+        }
     }
 
     var favoritesForCurrentFile: [FavoriteSnapshot] {
@@ -47,11 +107,13 @@ final class PlayerViewModel: ObservableObject {
     }
 
     var currentSeconds: Double {
+        if vlcPlayer != nil { return vlcCurrentSeconds }
         guard CMTIME_IS_NUMERIC(playbackService.currentTime) else { return 0 }
         return CMTimeGetSeconds(playbackService.currentTime)
     }
 
     var durationSeconds: Double {
+        if vlcPlayer != nil { return vlcDurationSeconds }
         guard CMTIME_IS_NUMERIC(playbackService.duration) else { return 0 }
         return CMTimeGetSeconds(playbackService.duration)
     }
@@ -66,15 +128,29 @@ final class PlayerViewModel: ObservableObject {
         let duration = durationSeconds
         guard duration > 0 else { return }
         let seconds = duration * min(max(progress, 0), 1)
+        if let vlc = vlcPlayer {
+            vlc.time = VLCTime(number: NSNumber(value: Int(seconds * 1000)))
+            return
+        }
         playbackService.seek(to: seconds)
     }
 
     func play() {
+        if let vlc = vlcPlayer {
+            vlc.play()
+            isPlaying = true
+            return
+        }
         playbackService.play()
         isPlaying = true
     }
 
     func pause() {
+        if let vlc = vlcPlayer {
+            vlc.pause()
+            isPlaying = false
+            return
+        }
         playbackService.pause()
         isPlaying = false
     }

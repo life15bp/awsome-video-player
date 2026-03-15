@@ -167,6 +167,12 @@ struct PlayerView: View {
     @State private var lastDragOffset: CGSize = .zero
     @State private var isFullScreen = false
 
+    /// MKV のときは VLC で再生（AVPlayer は使わない）
+    private var useVLCForCurrentFile: Bool {
+        guard let file = playerViewModel.currentFile else { return false }
+        return file.url.pathExtension.lowercased() == "mkv"
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             if let player = playerViewModel.player {
@@ -207,7 +213,11 @@ struct PlayerView: View {
                     PlaybackOverlayView()
                         .environmentObject(libraryViewModel)
                         .environmentObject(playerViewModel)
-                    
+
+                    if let errorMessage = playerViewModel.playbackError {
+                        playbackErrorOverlay(message: errorMessage)
+                    }
+
                     VStack {
                         HStack {
                             Button("★ お気に入りに追加") {
@@ -228,6 +238,39 @@ struct PlayerView: View {
                 }
 
                 playbackBar
+            } else if useVLCForCurrentFile, let file = playerViewModel.currentFile {
+                ZStack {
+                    VLCPlayerView(url: file.url) { player in
+                        playerViewModel.setVLCPlayer(player)
+                    }
+                    .aspectRatio(16 / 9, contentMode: .fit)
+                    .onTapGesture {
+                        playerViewModel.togglePlayPause()
+                    }
+
+                    PlaybackOverlayView()
+                        .environmentObject(libraryViewModel)
+                        .environmentObject(playerViewModel)
+
+                    VStack {
+                        HStack {
+                            Button("★ お気に入りに追加") {
+                                playerViewModel.addFavoriteAtCurrentTime()
+                            }
+                            Spacer()
+                            Button {
+                                togglePlayerFullScreen()
+                            } label: {
+                                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            }
+                            .buttonStyle(.plain)
+                            .help("フルスクリーン")
+                        }
+                        Spacer()
+                    }
+                    .padding(0)
+                }
+                playbackBar
             } else {
                 Text("No video selected")
                     .foregroundColor(.secondary)
@@ -237,6 +280,33 @@ struct PlayerView: View {
         .background(FullScreenWindowEnabler())
         .background(FullScreenObserver(isFullScreen: $isFullScreen))
         .background(SpaceKeyMonitorView(playerViewModel: playerViewModel))
+    }
+
+    /// 再生失敗時に表示するオーバーレイ（AVPlayer 非対応形式など）。MKV はデフォルトアプリで開ける。
+    private func playbackErrorOverlay(message: String) -> some View {
+        VStack(spacing: 12) {
+            Spacer()
+            Text(message)
+                .font(.body)
+                .foregroundColor(.white)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(Color.black.opacity(0.75))
+                .cornerRadius(8)
+            Text("MKV などはデフォルトの動画アプリ（IINA / VLC など）で再生できます")
+                .font(.caption)
+                .foregroundColor(.white.opacity(0.9))
+                .multilineTextAlignment(.center)
+            if playerViewModel.currentFile != nil {
+                Button("デフォルトのアプリで開く") {
+                    playerViewModel.openCurrentFileInDefaultApp()
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.opacity(0.4))
     }
 
     /// プレイヤーウィンドウをネイティブフルスクリーン（メニュー・Dock 非表示）で切り替え

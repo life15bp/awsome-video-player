@@ -27,6 +27,7 @@
 		A1F84DC92F646C8500348D6F /* AwesomeVideoPlayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F84D9C2F646C8500348D6F /* AwesomeVideoPlayerApp.swift */; };
 		A1F84DCA2F646C8500348D6F /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F84DAF2F646C8500348D6F /* LibraryView.swift */; };
 		A1F84DCB2F646C8500348D6F /* FavoriteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F84DA52F646C8500348D6F /* FavoriteService.swift */; };
+		A1F84DCF2F646C8500348D6F /* VLCPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F84DCE2F646C8500348D6F /* VLCPlayerView.swift */; };
 		A1F84DCC2F646C8500348D6F /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = A1F84DA32F646C8500348D6F /* .gitkeep */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,7 @@
 		A1F84DB32F646C8500348D6F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		A1F84DB42F646C8500348D6F /* ScrollCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureView.swift; sourceTree = "<group>"; };
 		A1F84DB52F646C8500348D6F /* VideoListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoListDetailView.swift; sourceTree = "<group>"; };
+		A1F84DCE2F646C8500348D6F /* VLCPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerView.swift; sourceTree = "<group>"; };
 		A1F84DCD2F646C8500348D6F /* AwesomeVideoPlayer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AwesomeVideoPlayer.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -152,6 +154,7 @@
 				A1F84DB32F646C8500348D6F /* RootView.swift */,
 				A1F84DB42F646C8500348D6F /* ScrollCaptureView.swift */,
 				A1F84DB52F646C8500348D6F /* VideoListDetailView.swift */,
+				A1F84DCE2F646C8500348D6F /* VLCPlayerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -190,6 +193,7 @@
 			);
 			name = AwesomeVideoPlayer;
 			packageProductDependencies = (
+				A1F84DD12F646C8500348D6F /* VLCKitSPM */,
 			);
 			productName = AwesomeVideoPlayer;
 			productReference = A1F84D8E2F64680700348D6F /* AwesomeVideoPlayer.app */;
@@ -219,6 +223,9 @@
 			);
 			mainGroup = A1F84D852F64680700348D6F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A1F84DD02F646C8500348D6F /* XCRemoteSwiftPackageReference "vlckit-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A1F84D8F2F64680700348D6F /* Products */;
 			projectDirPath = "";
@@ -228,6 +235,25 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A1F84DD02F646C8500348D6F /* XCRemoteSwiftPackageReference "vlckit-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tylerjonesio/vlckit-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1F84DD12F646C8500348D6F /* VLCKitSPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1F84DD02F646C8500348D6F /* XCRemoteSwiftPackageReference "vlckit-spm" */;
+			productName = VLCKitSPM;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A1F84D8C2F64680700348D6F /* Resources */ = {
@@ -265,6 +291,7 @@
 				A1F84DC92F646C8500348D6F /* AwesomeVideoPlayerApp.swift in Sources */,
 				A1F84DCA2F646C8500348D6F /* LibraryView.swift in Sources */,
 				A1F84DCB2F646C8500348D6F /* FavoriteService.swift in Sources */,
+				A1F84DCF2F646C8500348D6F /* VLCPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
