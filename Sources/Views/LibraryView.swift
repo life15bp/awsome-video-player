@@ -224,6 +224,10 @@ struct LibraryView: View {
                 Button("Reveal in Finder") {
                     NSWorkspace.shared.activateFileViewerSelecting([node.url])
                 }
+                Button("更新") {
+                    // フォルダ配下の動画一覧とツリーを再スキャン
+                    libraryViewModel.refreshAllVideos()
+                }
                 Button("フォルダ名の変更…") {
                     showRenameFolderAlert(url: node.url, currentName: node.name)
                 }
