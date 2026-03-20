@@ -25,6 +25,18 @@ final class ThumbnailService {
         targetSize: CGSize = .init(width: 320, height: 180),
         completion: @escaping (NSImage?) -> Void
     ) {
+        thumbnail(for: url, at: timeSeconds, targetSize: targetSize, toleranceSeconds: 0.0, completion: completion)
+    }
+
+    /// サムネイル生成（ホバー予告など高速化したい用途向け）
+    /// - Parameter toleranceSeconds: 多少のズレを許容して `copyCGImage` を軽くする（0 は従来通り厳密）
+    func thumbnail(
+        for url: URL,
+        at timeSeconds: Double?,
+        targetSize: CGSize = .init(width: 320, height: 180),
+        toleranceSeconds: Double,
+        completion: @escaping (NSImage?) -> Void
+    ) {
         let seconds = timeSeconds ?? 1
         // キャッシュキーは要求した時刻をそのまま使う（丸めない）。近い時刻で別サムネイルの画像が表示されるズレを防ぐ
         let timeKey = String(format: "%.3f", seconds)
@@ -40,8 +52,9 @@ final class ThumbnailService {
             let imageGenerator = AVAssetImageGenerator(asset: asset)
             imageGenerator.appliesPreferredTrackTransform = true
             imageGenerator.maximumSize = targetSize
-            imageGenerator.requestedTimeToleranceBefore = .zero
-            imageGenerator.requestedTimeToleranceAfter = .zero
+            let tolerance = CMTime(seconds: toleranceSeconds, preferredTimescale: 600)
+            imageGenerator.requestedTimeToleranceBefore = tolerance
+            imageGenerator.requestedTimeToleranceAfter = tolerance
             let time = CMTime(seconds: seconds, preferredTimescale: 600)
 
             do {

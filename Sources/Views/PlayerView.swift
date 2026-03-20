@@ -328,13 +328,52 @@ struct PlayerView: View {
                 .foregroundColor(.secondary)
                 .frame(width: 44, alignment: .trailing)
 
-            Slider(
-                value: Binding(
-                    get: { playerViewModel.progress },
-                    set: { playerViewModel.seek(to: $0) }
-                ),
-                in: 0...1
-            )
+            GeometryReader { geo in
+                ZStack(alignment: .topLeading) {
+                    SeekBarThumbnailControl(
+                        progress: playerViewModel.progress,
+                        onSeek: { playerViewModel.seek(to: $0) },
+                        onHoverProgress: { playerViewModel.onSeekBarHover(progress: $0) },
+                        onHoverExit: { playerViewModel.onSeekBarHoverExit() }
+                    )
+                    .frame(height: 20)
+
+                    if let p = playerViewModel.seekPreviewProgress,
+                       let t = playerViewModel.seekPreviewTimeSeconds {
+                        let tooltipW: CGFloat = 110
+                        let tooltipH: CGFloat = 92
+                        let rawX = CGFloat(p) * geo.size.width - tooltipW / 2
+                        let clampedX = min(max(rawX, 0), max(0, geo.size.width - tooltipW))
+
+                        VStack(spacing: 6) {
+                            ZStack {
+                                if let img = playerViewModel.seekPreviewThumbnail {
+                                    Image(nsImage: img)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: tooltipW, height: 62)
+                                        .clipped()
+                                } else {
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.4))
+                                        .frame(width: tooltipW, height: 62)
+                                }
+                            }
+                            Text(playerViewModel.formattedTime(t))
+                                .font(.caption2.monospacedDigit())
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.bottom, 6)
+                        }
+                        .frame(width: tooltipW, height: tooltipH)
+                        .background(Color.black.opacity(0.75))
+                        .cornerRadius(8)
+                        .offset(x: clampedX, y: -tooltipH - 8)
+                    }
+                }
+            }
+            .frame(height: 44)
+            .frame(maxWidth: .infinity)
 
             Text(playerViewModel.formattedTime(playerViewModel.durationSeconds))
                 .font(.caption.monospacedDigit())
@@ -369,6 +408,133 @@ struct PlayerView: View {
                         lastDragOffset = playerViewModel.viewport.offset
                     }
             )
+    }
+}
+
+/// シークバー上のマウス移動（hover）とドラッグ（seek）を拾う NSView。
+/// 進行度（0...1）を外部へコールバックする。
+private struct SeekBarThumbnailControl: NSViewRepresentable {
+    var progress: Double
+    var onSeek: (Double) -> Void
+    var onHoverProgress: (Double) -> Void
+    var onHoverExit: () -> Void
+
+    func makeNSView(context: Context) -> SeekBarHoverNSView {
+        let v = SeekBarHoverNSView()
+        v.coordinator = context.coordinator
+        v.progress = progress
+        return v
+    }
+
+    func updateNSView(_ nsView: SeekBarHoverNSView, context: Context) {
+        nsView.progress = progress
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onSeek: onSeek, onHoverProgress: onHoverProgress, onHoverExit: onHoverExit)
+    }
+
+    final class Coordinator {
+        let onSeek: (Double) -> Void
+        let onHoverProgress: (Double) -> Void
+        let onHoverExit: () -> Void
+
+        init(onSeek: @escaping (Double) -> Void,
+             onHoverProgress: @escaping (Double) -> Void,
+             onHoverExit: @escaping () -> Void) {
+            self.onSeek = onSeek
+            self.onHoverProgress = onHoverProgress
+            self.onHoverExit = onHoverExit
+        }
+    }
+}
+
+private final class SeekBarHoverNSView: NSView {
+    var coordinator: SeekBarThumbnailControl.Coordinator!
+
+    var progress: Double = 0 {
+        didSet { needsDisplay = true }
+    }
+
+    private var trackingArea: NSTrackingArea?
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let trackingArea {
+            self.removeTrackingArea(trackingArea)
+        }
+        let options: NSTrackingArea.Options = [.inVisibleRect, .mouseMoved, .activeAlways, .enabledDuringMouseDrag]
+        trackingArea = NSTrackingArea(rect: bounds, options: options, owner: self, userInfo: nil)
+        if let trackingArea { addTrackingArea(trackingArea) }
+    }
+
+    private func progress(for point: NSPoint) -> Double {
+        guard bounds.width > 0 else { return 0 }
+        let x = min(max(point.x, 0), bounds.width)
+        return x / bounds.width
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+
+        guard bounds.width > 0, bounds.height > 0 else { return }
+
+        let trackHeight: CGFloat = 4
+        let y = bounds.midY - trackHeight / 2
+        let trackRect = NSRect(x: 0, y: y, width: bounds.width, height: trackHeight)
+
+        let bgColor = NSColor.controlAccentColor.withAlphaComponent(0.25)
+        bgColor.setFill()
+        NSBezierPath(
+            roundedRect: trackRect,
+            xRadius: trackHeight / 2,
+            yRadius: trackHeight / 2
+        ).fill()
+
+        let clamped = min(max(progress, 0), 1)
+        let filledWidth = bounds.width * clamped
+        if filledWidth > 0 {
+            let filledRect = NSRect(x: 0, y: y, width: filledWidth, height: trackHeight)
+            NSColor.controlAccentColor.setFill()
+            NSBezierPath(
+                roundedRect: filledRect,
+                xRadius: trackHeight / 2,
+                yRadius: trackHeight / 2
+            ).fill()
+        }
+
+        // ノブ
+        let knobRadius: CGFloat = 6
+        let knobX = bounds.width * clamped
+        let knobRect = NSRect(
+            x: knobX - knobRadius,
+            y: bounds.midY - knobRadius,
+            width: knobRadius * 2,
+            height: knobRadius * 2
+        )
+        NSColor.windowFrameTextColor.withAlphaComponent(0.9).setFill()
+        NSBezierPath(ovalIn: knobRect).fill()
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        let p = progress(for: convert(event.locationInWindow, from: nil))
+        coordinator.onHoverProgress(p)
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        let p = progress(for: convert(event.locationInWindow, from: nil))
+        coordinator.onSeek(p)
+        coordinator.onHoverProgress(p)
+    }
+
+    override func mouseDragged(with event: NSEvent) {
+        let p = progress(for: convert(event.locationInWindow, from: nil))
+        coordinator.onSeek(p)
+        coordinator.onHoverProgress(p)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        coordinator.onHoverExit()
     }
 }
 

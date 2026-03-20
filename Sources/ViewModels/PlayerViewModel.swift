@@ -20,6 +20,20 @@ final class PlayerViewModel: ObservableObject {
     /// 動画本体に付けたタグ（videoId → タグ一覧）
     @Published private(set) var videoTagMap: [UUID: [String]] = [:]
 
+    // MARK: - SeekBar hover thumbnail preview（YouTube 風）
+    @Published private(set) var seekPreviewThumbnail: NSImage?
+    @Published private(set) var seekPreviewTimeSeconds: Double?
+    @Published private(set) var seekPreviewProgress: Double?
+    
+    // ホバー予告用: 事前にサムネを生成して参照する（ホバー時に生成しない）
+    private var seekPreviewVideoID: UUID?
+    private var seekPreviewThumbnailMap: [Int: NSImage] = [:]
+    private let seekPreviewFrameCount: Int = 18
+    private var seekPreviewIsPreparing: Bool = false
+    private var seekPreviewPrepRequestId: UInt64 = 0
+    private let seekPreviewTargetSize: CGSize = CGSize(width: 80, height: 45)
+    private let seekPreviewToleranceSeconds: Double = 0.07
+
     private let playbackService: PlaybackService
     private let favoriteService: FavoriteService
     private var cancellables = Set<AnyCancellable>()
@@ -38,6 +52,15 @@ final class PlayerViewModel: ObservableObject {
         playbackService.$playbackError
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &cancellables)
+
+        // AVPlayer 側（mp4/mov など）の duration が取れたタイミングで先読み生成を開始
+        playbackService.$duration
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] duration in
+                guard let self else { return }
+                self.maybeStartSeekPreviewPreparation(durationSeconds: CMTimeGetSeconds(duration))
+            }
             .store(in: &cancellables)
     }
 
@@ -73,7 +96,92 @@ final class PlayerViewModel: ObservableObject {
                 self.objectWillChange.send()
             }
         }
+        
+        // VLC の duration が取れたらホバー予告を先読み生成
+        maybeStartSeekPreviewPreparation(durationSeconds: vlcDurationSeconds)
         objectWillChange.send()
+    }
+
+    func onSeekBarHover(progress rawProgress: Double) {
+        guard let _ = currentFile else { return }
+        let duration = durationSeconds
+        guard duration > 0, duration.isFinite else { return }
+
+        let clamped = min(max(rawProgress, 0), 1)
+        let seconds = duration * clamped
+
+        seekPreviewProgress = clamped
+        seekPreviewTimeSeconds = seconds
+
+        let idx = seekPreviewIndex(forProgress: clamped)
+        seekPreviewThumbnail = seekPreviewThumbnailMap[idx]
+    }
+
+    func onSeekBarHoverExit() {
+        seekPreviewProgress = nil
+        seekPreviewTimeSeconds = nil
+        seekPreviewThumbnail = nil
+    }
+
+    private func seekPreviewIndex(forProgress progress: Double) -> Int {
+        let clamped = min(max(progress, 0), 1)
+        let maxIndex = max(seekPreviewFrameCount - 1, 0)
+        let idx = Int(round(Double(maxIndex) * clamped))
+        return min(max(idx, 0), maxIndex)
+    }
+
+    private func maybeStartSeekPreviewPreparation(durationSeconds: Double) {
+        guard let file = currentFile else { return }
+        guard durationSeconds.isFinite, durationSeconds > 0 else { return }
+        guard seekPreviewIsPreparing == false else { return }
+        guard seekPreviewVideoID != file.id else { return }
+
+        seekPreviewVideoID = file.id
+        seekPreviewIsPreparing = true
+        seekPreviewThumbnailMap = [:]
+
+        seekPreviewPrepRequestId &+= 1
+        let requestId = seekPreviewPrepRequestId
+
+        let duration = durationSeconds
+        let n = max(seekPreviewFrameCount, 2)
+
+        let group = DispatchGroup()
+
+        for i in 0..<n {
+            let ratio = Double(i) / Double(n - 1)
+            var t = duration * ratio
+            // 先頭/末尾のフレームは黒が出やすいので少しずらす
+            if i == 0 { t = min(duration, max(0.001, duration * ratio)) }
+            if i == n - 1 { t = max(0, duration - 0.001) }
+
+            group.enter()
+            ThumbnailService.shared.thumbnail(
+                for: file.url,
+                at: t,
+                targetSize: seekPreviewTargetSize,
+                toleranceSeconds: seekPreviewToleranceSeconds
+            ) { [weak self] image in
+                guard let self else { group.leave(); return }
+                // 動画が変わったら結果を無視
+                guard self.seekPreviewPrepRequestId == requestId, self.seekPreviewVideoID == file.id else {
+                    group.leave()
+                    return
+                }
+
+                if let image {
+                    self.seekPreviewThumbnailMap[i] = image
+                }
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) { [weak self] in
+            guard let self else { return }
+            self.seekPreviewIsPreparing = false
+            // 予告が埋まった可能性があるので一度だけ UI 更新を促す
+            self.objectWillChange.send()
+        }
     }
 
     /// 再生失敗時のメッセージ（nil ならエラーなし）。Phase1: AVPlayer 失敗時。Phase2 で MKV 別エンジンに切り替える前提。
@@ -94,6 +202,12 @@ final class PlayerViewModel: ObservableObject {
         player = playbackService.player
         viewport = ViewportState()
         isPlaying = false
+        onSeekBarHoverExit()
+        
+        // 動画切り替え時はホバー予告キャッシュをクリア（duration 取得後に先読み生成）
+        seekPreviewVideoID = nil
+        seekPreviewIsPreparing = false
+        seekPreviewThumbnailMap = [:]
         if player != nil {
             play()
         }
