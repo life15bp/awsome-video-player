@@ -28,7 +28,7 @@ final class PlayerViewModel: ObservableObject {
     // ホバー予告用: 事前にサムネを生成して参照する（ホバー時に生成しない）
     private var seekPreviewVideoID: UUID?
     private var seekPreviewThumbnailMap: [Int: NSImage] = [:]
-    private let seekPreviewFrameCount: Int = 18
+    private let seekPreviewFrameCount: Int = 30
     private var seekPreviewIsPreparing: Bool = false
     private var seekPreviewPrepRequestId: UInt64 = 0
     private let seekPreviewTargetSize: CGSize = CGSize(width: 80, height: 45)
